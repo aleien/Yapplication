@@ -47,8 +47,6 @@ dependencies {
     compile 'com.jakewharton:butterknife:7.0.1'
 
     // Dependency Injection
-//    compile 'com.google.dagger:dagger:2.0.2'
-//    apt "com.google.dagger:dagger-compiler:2.0.2"
     compile 'javax.annotation:jsr250-api:1.0'
 
     // UI
