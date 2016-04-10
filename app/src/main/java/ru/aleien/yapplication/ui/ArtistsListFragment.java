@@ -13,8 +13,8 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import ru.aleien.yapplication.ArtistsListView;
 import ru.aleien.yapplication.R;
-import ru.aleien.yapplication.adapters.ArtistsListAdapter;
 import ru.aleien.yapplication.model.Artist;
+import ru.aleien.yapplication.ui.adapters.ArtistsListAdapter;
 
 /**
  * Created by aleien on 09.04.16.

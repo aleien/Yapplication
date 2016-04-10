@@ -1,4 +1,4 @@
-package ru.aleien.yapplication.adapters;
+package ru.aleien.yapplication.ui.adapters;
 
 import android.content.Context;
 import android.database.DataSetObserver;
@@ -11,10 +11,12 @@ import android.widget.ListAdapter;
 import android.widget.TextView;
 
 import java.util.List;
+import java.util.Locale;
 
 import ru.aleien.yapplication.R;
 import ru.aleien.yapplication.model.Artist;
 import ru.aleien.yapplication.utils.ImageLoader;
+import ru.aleien.yapplication.utils.Utils;
 
 /**
  * Created by aleien on 09.04.16.
@@ -65,7 +67,7 @@ public class ArtistsListAdapter implements ListAdapter {
         if (item == null) {
             item = inflater.inflate(R.layout.item_artist, parent);
 
-            // Используем паттерн ViewHolder, т.к. findViewById - затратнаяпо времени операция
+            // Используем паттерн ViewHolder, т.к. findViewById - затратная по времени операция
             ArtistHolder artistHolder = new ArtistHolder();
             artistHolder.cover = (ImageView) item.findViewById(R.id.cover);
             artistHolder.name = (TextView) item.findViewById(R.id.name);
@@ -76,10 +78,22 @@ public class ArtistsListAdapter implements ListAdapter {
         }
 
         ArtistHolder holder = (ArtistHolder) item.getTag();
-        ImageLoader.loadImage(parent.getContext(), holder.cover, Uri.parse(artists.get(position).cover.small));
+        Artist artist = artists.get(position);
+        bindArtistsData(parent, holder, artist);
 
         return item;
     }
+
+    private void bindArtistsData(ViewGroup parent, ArtistHolder holder, Artist artist) {
+        ImageLoader.loadImage(parent.getContext(), holder.cover, Uri.parse(artist.cover.small));
+        holder.name.setText(artist.name);
+        holder.genres.setText(Utils.convertToString(artist.genres, ','));
+        holder.musicInfo.setText(String.format(Locale.getDefault(),
+                "%d albums, %d songs",
+                artist.albums,
+                artist.tracks));
+    }
+
 
     @Override
     public int getItemViewType(int position) {

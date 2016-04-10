@@ -10,8 +10,10 @@ import ru.aleien.yapplication.model.Artist;
  * Фрагмент для отображения информации о музыканте.
  */
 public class ArtistInfoFragment extends Fragment implements ArtistInfoView {
+    private Artist artist;
+
     @Override
     public void setInfo(Artist artist) {
-
+        this.artist = artist;
     }
 }

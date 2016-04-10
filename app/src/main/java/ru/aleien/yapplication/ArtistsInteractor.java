@@ -6,6 +6,7 @@ import java.util.List;
 
 import ru.aleien.yapplication.dataprovider.WebArtistsProvider;
 import ru.aleien.yapplication.model.Artist;
+import ru.aleien.yapplication.ui.ArtistInfoFragment;
 import ru.aleien.yapplication.ui.ArtistsListFragment;
 
 /**
@@ -13,10 +14,11 @@ import ru.aleien.yapplication.ui.ArtistsListFragment;
  * Интерактор, он же контроллер. Запрашивает список музыкантов у поставщика данных, передает их
  * вьюхам.
  */
-public class ArtistsInteractor implements ArtistsRequester {
+public class ArtistsInteractor implements ArtistsRequester, UIReactor {
     final ArtistsProvider artistsProvider = new WebArtistsProvider(this);
     ArtistsListView artistsListView;
     ArtistInfoView artistInfoView;
+    UIPresenter uiPresenter;
 
     List<Artist> artists;
 
@@ -31,7 +33,7 @@ public class ArtistsInteractor implements ArtistsRequester {
     }
 
     public void takeListView(ArtistsListView list) {
-
+        artistsListView = list;
     }
 
     public void takeDetailedView(ArtistInfoView info) {
@@ -43,5 +45,17 @@ public class ArtistsInteractor implements ArtistsRequester {
     public void provideData(List<Artist> response) {
         artists = response;
         artistsListView.setList(artists);
+    }
+
+    @Override
+    public void onArtistClicked(Artist artist) {
+        ArtistInfoFragment fragment = new ArtistInfoFragment();
+        fragment.setInfo(artist);
+        uiPresenter.changeFragment(fragment);
+    }
+
+    @Override
+    public void onBackClicked() {
+        uiPresenter.popBackStack();
     }
 }
