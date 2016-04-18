@@ -55,7 +55,8 @@ public class ArtistsInteractorTest {
         List<Artist> data = new ArrayList<>();
         data.add(goodArtist);
 
-        activity.artistsInteractor.provideData(data);
+
+//        activity.artistsInteractor.provideData(data);
 
     }
 

@@ -29,7 +29,7 @@ public class ImageLoader {
     public static void loadImage(Context context, ImageView imageView, Uri uri) {
         Glide.with(context)
                 .load(uri)
-                .fitCenter()
+                .centerCrop()
                 .into(imageView);
     }
 }

@@ -65,7 +65,7 @@ public class ArtistsListAdapter implements ListAdapter {
         View item = convertView;
 
         if (item == null) {
-            item = inflater.inflate(R.layout.item_artist, parent);
+            item = inflater.inflate(R.layout.item_artist, parent, false);
 
             // Используем паттерн ViewHolder, т.к. findViewById - затратная по времени операция
             ArtistHolder artistHolder = new ArtistHolder();
@@ -102,7 +102,7 @@ public class ArtistsListAdapter implements ListAdapter {
 
     @Override
     public int getViewTypeCount() {
-        return 0;
+        return 1;
     }
 
     @Override

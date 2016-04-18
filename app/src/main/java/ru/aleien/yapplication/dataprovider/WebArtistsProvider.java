@@ -3,7 +3,6 @@ package ru.aleien.yapplication.dataprovider;
 import android.util.Log;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import okhttp3.Call;
@@ -21,6 +20,7 @@ import ru.aleien.yapplication.model.Artist;
  */
 public class WebArtistsProvider implements ArtistsProvider {
     static final String JSON_URL = "http://cache-default03g.cdn.yandex.net/download.cdn.yandex.net/mobilization-2016/artists.json";
+
     final OkHttpClient client = new OkHttpClient();
     final ArtistsRequester artistsRequester;
 
@@ -43,12 +43,13 @@ public class WebArtistsProvider implements ArtistsProvider {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 artistsRequester.provideData(decodeResponse(response));
-
             }
         });
     }
 
     private List<Artist> decodeResponse(Response response) {
-        return new ArrayList<>();
+
+
+        return null;
     }
 }
