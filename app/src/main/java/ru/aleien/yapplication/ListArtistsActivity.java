@@ -3,43 +3,48 @@ package ru.aleien.yapplication;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 
 import ru.aleien.yapplication.model.Artist;
 import ru.aleien.yapplication.ui.ArtistInfoFragment;
 import ru.aleien.yapplication.ui.ArtistsListFragment;
-import ru.aleien.yapplication.utils.ImageLoader;
 
 public class ListArtistsActivity extends AppCompatActivity implements MainView {
-    final ArtistsInteractor artistsInteractor = new ArtistsInteractor();
+    final ArtistsPresenter artistsPresenter = new ArtistsPresenter();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ImageLoader imageLoader = ImageLoader.getInstance();
 
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
+        setupToolbar();
         setup(R.id.fragment_container);
-
     }
+
 
     public void setup(int fragmentContainerId) {
         ArtistsListFragment artistsListFragment = new ArtistsListFragment();
 
         changeFragmentTo(fragmentContainerId, artistsListFragment, "Artists List");
-        artistsInteractor.takeListView(artistsListFragment);
+        artistsPresenter.takeMainView(this);
+        artistsPresenter.takeListView(artistsListFragment);
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    private void setupToolbar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
     }
 
     @Override
-    public void openArtistInfo(Artist artist) {
+    public ArtistInfoFragment openArtistInfo(Artist artist) {
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ArtistInfoFragment artistInfoFragment = new ArtistInfoFragment();
-
         changeFragmentTo(R.id.fragment_container, artistInfoFragment, "Artist Info");
-        artistsInteractor.takeDetailedView(artistInfoFragment, artist);
+        return artistInfoFragment;
     }
 
     private void changeFragmentTo(int fragmentContainerId, Fragment fragment, String tag) {

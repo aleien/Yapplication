@@ -13,6 +13,7 @@ import android.widget.TextView;
 import java.util.List;
 import java.util.Locale;
 
+import ru.aleien.yapplication.ArtistClickHandler;
 import ru.aleien.yapplication.R;
 import ru.aleien.yapplication.model.Artist;
 import ru.aleien.yapplication.utils.ImageLoader;
@@ -24,9 +25,11 @@ import ru.aleien.yapplication.utils.Utils;
  */
 public class ArtistsListAdapter implements ListAdapter {
     List<Artist> artists;
+    ArtistClickHandler clickHandler;
 
-    public ArtistsListAdapter(List<Artist> artists) {
+    public ArtistsListAdapter(List<Artist> artists, ArtistClickHandler clickHandler) {
         this.artists = artists;
+        this.clickHandler = clickHandler;
     }
 
     @Override
@@ -81,11 +84,13 @@ public class ArtistsListAdapter implements ListAdapter {
         Artist artist = artists.get(position);
         bindArtistsData(parent, holder, artist);
 
+        item.setOnClickListener(l -> clickHandler.artistClicked(artist));
+
         return item;
     }
 
     private void bindArtistsData(ViewGroup parent, ArtistHolder holder, Artist artist) {
-        ImageLoader.loadImage(parent.getContext(), holder.cover, Uri.parse(artist.cover.small));
+        ImageLoader.getInstance().loadImage(parent.getContext(), holder.cover, Uri.parse(artist.cover.small));
         holder.name.setText(artist.name);
         holder.genres.setText(Utils.convertToString(artist.genres, ','));
         holder.musicInfo.setText(String.format(Locale.getDefault(),

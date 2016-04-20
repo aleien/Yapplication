@@ -1,6 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-</FrameLayout>
+    <ImageView
+        android:id="@+id/info_cover"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        tools:src="#baedf7" />
+
+    <TextView
+        android:id="@+id/info_genres"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/padding"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        tools:text="jazz, funk" />
+
+    <TextView
+        android:id="@+id/info_music"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/padding"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        tools:text="2 albums, 10 songs" />
+
+    <TextView
+        android:id="@+id/info_header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/padding"
+        android:text="Biography"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <TextView
+        android:id="@+id/info_bio"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/padding"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        tools:text="Lalalal alallala lalalal allala lalalalalallaala lalalalal lalalal lalalaa lalala lalala lalala lalal" />
+</LinearLayout>

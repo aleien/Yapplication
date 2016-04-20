@@ -6,16 +6,13 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListAdapter;
 import android.widget.ListView;
-
-import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import ru.aleien.yapplication.ArtistsListView;
 import ru.aleien.yapplication.R;
-import ru.aleien.yapplication.model.Artist;
-import ru.aleien.yapplication.ui.adapters.ArtistsListAdapter;
 
 /**
  * Created by aleien on 09.04.16.
@@ -25,7 +22,7 @@ public class ArtistsListFragment extends Fragment implements ArtistsListView {
     @Bind(R.id.artists_list)
     ListView artistsList;
 
-    List<Artist> artists;
+    ListAdapter adapter;
 
 
     @Override
@@ -38,16 +35,12 @@ public class ArtistsListFragment extends Fragment implements ArtistsListView {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        artistsList.setAdapter(new ArtistsListAdapter(artists));
+        artistsList.setAdapter(adapter);
     }
 
+
     @Override
-    public void setList(List<Artist> artists) {
-        this.artists = artists;
-
-        if (artistsList != null) {
-            artistsList.setAdapter(new ArtistsListAdapter(artists));
-        }
-
+    public void setAdapter(ListAdapter adapter) {
+        this.adapter = adapter;
     }
 }

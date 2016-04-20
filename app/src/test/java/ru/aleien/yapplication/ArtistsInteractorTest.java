@@ -56,7 +56,7 @@ public class ArtistsInteractorTest {
         data.add(goodArtist);
 
 
-//        activity.artistsInteractor.provideData(data);
+//        activity.artistsPresenter.provideData(data);
 
     }
 

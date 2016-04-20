@@ -11,5 +11,10 @@ import ru.aleien.yapplication.model.Artist;
  * Плюс: легко замокать! (:
  */
 public interface ArtistsRequester {
+    void takeMainView(MainView mainView);
+
+    void takeDetailedView(ArtistInfoView infoView, Artist artist);
+
+    void takeListView(ArtistsListView listView);
     void provideData(List<Artist> response);
 }
