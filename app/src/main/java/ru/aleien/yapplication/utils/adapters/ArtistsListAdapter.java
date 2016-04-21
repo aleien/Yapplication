@@ -23,6 +23,7 @@ import ru.aleien.yapplication.utils.Utils;
  * Created by aleien on 09.04.16.
  * Класс-адаптер для отображения списка исполнителей.
  */
+// TODO: Сделать ресайклер
 public class ArtistsListAdapter implements ListAdapter {
     List<Artist> artists;
     ArtistClickHandler clickHandler;

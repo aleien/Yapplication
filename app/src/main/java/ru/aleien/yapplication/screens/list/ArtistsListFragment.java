@@ -41,5 +41,9 @@ public class ArtistsListFragment extends Fragment implements ArtistsListView {
     @Override
     public void setAdapter(ListAdapter adapter) {
         this.adapter = adapter;
+
+        if (this.isAdded()) {
+            artistsList.setAdapter(adapter);
+        }
     }
 }

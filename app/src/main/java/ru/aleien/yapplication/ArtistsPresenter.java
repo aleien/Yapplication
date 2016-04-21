@@ -8,7 +8,7 @@ import java.util.List;
 
 import ru.aleien.yapplication.base.BasePresenter;
 import ru.aleien.yapplication.dataprovider.ArtistsProvider;
-import ru.aleien.yapplication.dataprovider.FakeDataProvider;
+import ru.aleien.yapplication.dataprovider.WebArtistsProvider;
 import ru.aleien.yapplication.model.Artist;
 import ru.aleien.yapplication.screens.detailedinfo.ArtistInfoFragment;
 import ru.aleien.yapplication.screens.detailedinfo.ArtistInfoView;
@@ -22,7 +22,7 @@ import ru.aleien.yapplication.utils.adapters.ArtistsListAdapter;
  * вьюхам.
  */
 public class ArtistsPresenter extends BasePresenter<MainView> implements ArtistsRequester, ArtistClickHandler, Serializable {
-    final ArtistsProvider artistsProvider = new FakeDataProvider(this);
+    final ArtistsProvider artistsProvider = new WebArtistsProvider(this);
     WeakReference<ArtistsListView> artistsListView;
     WeakReference<ArtistInfoView> artistInfoView;
     WeakReference<Fragment> currentFragment;
