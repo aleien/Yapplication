@@ -1,4 +1,4 @@
-package ru.aleien.yapplication;
+package ru.aleien.yapplication.screens.list;
 
 import android.widget.ListAdapter;
 

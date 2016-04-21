@@ -1,4 +1,4 @@
-package ru.aleien.yapplication;
+package ru.aleien.yapplication.dataprovider;
 
 /**
  * Created by aleien on 09.04.16.

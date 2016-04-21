@@ -1,11 +1,10 @@
 package ru.aleien.yapplication;
 
-import ru.aleien.yapplication.model.Artist;
-import ru.aleien.yapplication.ui.ArtistInfoFragment;
+import android.support.v4.app.Fragment;
 
 /**
  * Created by aleien on 18.04.16.
  */
 public interface MainView {
-    ArtistInfoFragment openArtistInfo(Artist artist);
+    void changeFragmentTo(Fragment fragment, boolean hideBackButton);
 }

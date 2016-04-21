@@ -3,6 +3,8 @@ package ru.aleien.yapplication;
 import java.util.List;
 
 import ru.aleien.yapplication.model.Artist;
+import ru.aleien.yapplication.screens.detailedinfo.ArtistInfoView;
+import ru.aleien.yapplication.screens.list.ArtistsListView;
 
 /**
  * Created by aleien on 09.04.16.
@@ -11,10 +13,7 @@ import ru.aleien.yapplication.model.Artist;
  * Плюс: легко замокать! (:
  */
 public interface ArtistsRequester {
-    void takeMainView(MainView mainView);
-
     void takeDetailedView(ArtistInfoView infoView, Artist artist);
-
     void takeListView(ArtistsListView listView);
     void provideData(List<Artist> response);
 }

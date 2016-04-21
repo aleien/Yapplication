@@ -1,4 +1,4 @@
-package ru.aleien.yapplication.ui.adapters;
+package ru.aleien.yapplication.utils.adapters;
 
 import android.content.Context;
 import android.database.DataSetObserver;
@@ -90,7 +90,7 @@ public class ArtistsListAdapter implements ListAdapter {
     }
 
     private void bindArtistsData(ViewGroup parent, ArtistHolder holder, Artist artist) {
-        ImageLoader.getInstance().loadImage(parent.getContext(), holder.cover, Uri.parse(artist.cover.small));
+        ImageLoader.getInstance().loadImageCropped(parent.getContext(), holder.cover, Uri.parse(artist.cover.small));
         holder.name.setText(artist.name);
         holder.genres.setText(Utils.convertToString(artist.genres, ','));
         holder.musicInfo.setText(String.format(Locale.getDefault(),

@@ -10,7 +10,6 @@ import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import ru.aleien.yapplication.ArtistsProvider;
 import ru.aleien.yapplication.ArtistsRequester;
 import ru.aleien.yapplication.model.Artist;
 

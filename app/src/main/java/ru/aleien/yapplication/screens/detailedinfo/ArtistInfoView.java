@@ -1,4 +1,4 @@
-package ru.aleien.yapplication;
+package ru.aleien.yapplication.screens.detailedinfo;
 
 import ru.aleien.yapplication.model.Artist;
 

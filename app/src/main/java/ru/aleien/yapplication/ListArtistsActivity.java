@@ -1,34 +1,60 @@
 package ru.aleien.yapplication;
 
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-
-import ru.aleien.yapplication.model.Artist;
-import ru.aleien.yapplication.ui.ArtistInfoFragment;
-import ru.aleien.yapplication.ui.ArtistsListFragment;
+import android.view.MenuItem;
 
 public class ListArtistsActivity extends AppCompatActivity implements MainView {
-    final ArtistsPresenter artistsPresenter = new ArtistsPresenter();
-
+    ArtistsPresenter artistsPresenter;
+    // TODO: Найти лик и уничтожить!
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         setupToolbar();
-        setup(R.id.fragment_container);
+        instantiatePresenter(savedInstanceState);
+
     }
 
+    private void instantiatePresenter(Bundle savedInstanceState) {
+        if (savedInstanceState != null && savedInstanceState.containsKey("presenterState")) {
+            artistsPresenter = (ArtistsPresenter) savedInstanceState.get("presenterState");
+        } else {
+            artistsPresenter = new ArtistsPresenter();
+        }
+    }
 
-    public void setup(int fragmentContainerId) {
-        ArtistsListFragment artistsListFragment = new ArtistsListFragment();
+    @Override
+    protected void onStart() {
+        super.onStart();
+        artistsPresenter.attachView(this);
+        artistsPresenter.onStart();
+    }
 
-        changeFragmentTo(fragmentContainerId, artistsListFragment, "Artists List");
-        artistsPresenter.takeMainView(this);
-        artistsPresenter.takeListView(artistsListFragment);
+    @Override
+    protected void onStop() {
+        super.onStop();
+        artistsPresenter.detachView();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
+        super.onSaveInstanceState(outState, outPersistentState);
+        outState.putSerializable("presenterState", artistsPresenter);
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    @Override
+    public boolean onOptionsItemSelected(MenuItem menuItem) {
+        if (menuItem.getItemId() == android.R.id.home) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+            getSupportFragmentManager().popBackStack();
+        }
+        return super.onOptionsItemSelected(menuItem);
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -39,20 +65,20 @@ public class ListArtistsActivity extends AppCompatActivity implements MainView {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Override
-    public ArtistInfoFragment openArtistInfo(Artist artist) {
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        ArtistInfoFragment artistInfoFragment = new ArtistInfoFragment();
-        changeFragmentTo(R.id.fragment_container, artistInfoFragment, "Artist Info");
-        return artistInfoFragment;
-    }
-
-    private void changeFragmentTo(int fragmentContainerId, Fragment fragment, String tag) {
+    public void changeFragmentTo(Fragment fragment, boolean hideBackButton) {
+        getSupportActionBar().setDisplayHomeAsUpEnabled(hideBackButton);
         getSupportFragmentManager().beginTransaction()
-                .replace(fragmentContainerId, fragment, tag)
-                .addToBackStack(tag)
+                .replace(R.id.fragment_container, fragment)
+                .addToBackStack(null)
                 .commit();
     }
 
-
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        //noinspection ConstantConditions
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+    }
 }

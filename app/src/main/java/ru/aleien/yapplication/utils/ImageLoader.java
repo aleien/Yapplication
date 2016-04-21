@@ -12,7 +12,6 @@ import com.bumptech.glide.Glide;
  */
 
 public class ImageLoader {
-    // TODO: синглтон в андроиде не является безопасным, т.к. может быть собран GC. Реализовать как-нибудь по-другому (в контексте приложения?)
     private static ImageLoader instance;
 
     private ImageLoader() {
@@ -26,10 +25,16 @@ public class ImageLoader {
 
     }
 
-    public void loadImage(Context context, ImageView imageView, Uri uri) {
+    public void loadImageCropped(Context context, ImageView imageView, Uri uri) {
         Glide.with(context)
                 .load(uri)
                 .centerCrop()
+                .into(imageView);
+    }
+
+    public void loadImage(Context context, ImageView imageView, Uri uri) {
+        Glide.with(context)
+                .load(uri)
                 .into(imageView);
     }
 }

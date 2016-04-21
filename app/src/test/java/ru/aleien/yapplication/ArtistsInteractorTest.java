@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import ru.aleien.yapplication.model.Artist;
+import ru.aleien.yapplication.screens.list.ArtistsListView;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -26,7 +27,7 @@ public class ArtistsInteractorTest {
     private ListArtistsActivity activity;
 
     private Artist goodArtist = new Artist(1, "The Good", Arrays.asList("jazz", "swing"), 10, 2, "http://thegood.com", "The Good's description", new Artist.Cover("smallImage", "bigImage"));
-    private Artist badArtist = new Artist(2, "The Bad", null, 0, 0, null, null, null);
+    private Artist badArtist = new Artist(2, "The Bad", null, 0, 0, null, null, new Artist.Cover(null, null));
 
     @Before
     public void setup() {

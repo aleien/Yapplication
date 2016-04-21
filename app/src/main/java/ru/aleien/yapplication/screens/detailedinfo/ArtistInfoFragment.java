@@ -1,4 +1,4 @@
-package ru.aleien.yapplication.ui;
+package ru.aleien.yapplication.screens.detailedinfo;
 
 import android.net.Uri;
 import android.os.Bundle;
@@ -14,7 +14,6 @@ import java.util.Locale;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import ru.aleien.yapplication.ArtistInfoView;
 import ru.aleien.yapplication.R;
 import ru.aleien.yapplication.model.Artist;
 import ru.aleien.yapplication.utils.ImageLoader;
@@ -55,11 +54,15 @@ public class ArtistInfoFragment extends Fragment implements ArtistInfoView {
         setup();
     }
 
+    // TODO: форматирование строки в зависимости от количества песен/альбомов
     private void setup() {
-        ImageLoader.getInstance().loadImage(getContext(), cover, Uri.parse(artist.cover.big));
-        genres.setText(convertToString(artist.genres, ','));
-        infoMusic.setText(String.format(Locale.getDefault(), "%d albums · %d songs", artist.albums, artist.tracks));
-        bio.setText(artist.description);
+        if (artist != null) {
+            ImageLoader.getInstance().loadImage(getContext(), cover, Uri.parse(artist.cover.big));
+            genres.setText(convertToString(artist.genres, ','));
+            infoMusic.setText(String.format(Locale.getDefault(), getResources().getString(R.string.music_info), artist.albums, artist.tracks));
+            bio.setText(artist.description);
+        }
+
     }
 
     @Override

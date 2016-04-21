@@ -1,4 +1,4 @@
-package ru.aleien.yapplication.ui;
+package ru.aleien.yapplication.screens.list;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -11,7 +11,6 @@ import android.widget.ListView;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import ru.aleien.yapplication.ArtistsListView;
 import ru.aleien.yapplication.R;
 
 /**
