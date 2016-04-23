@@ -24,7 +24,7 @@ public class ListArtistsActivity extends AppCompatActivity implements MainView {
         if (savedInstanceState != null && savedInstanceState.containsKey("presenterState")) {
             artistsPresenter = (ArtistsPresenter) savedInstanceState.get("presenterState");
         } else {
-            artistsPresenter = new ArtistsPresenter();
+            artistsPresenter = new ArtistsPresenter(this);
         }
     }
 

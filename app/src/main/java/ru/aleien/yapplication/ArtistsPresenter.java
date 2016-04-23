@@ -1,5 +1,6 @@
 package ru.aleien.yapplication;
 
+import android.content.Context;
 import android.support.v4.app.Fragment;
 
 import java.io.Serializable;
@@ -22,15 +23,15 @@ import ru.aleien.yapplication.utils.adapters.ArtistsListAdapter;
  * вьюхам.
  */
 public class ArtistsPresenter extends BasePresenter<MainView> implements ArtistsRequester, ArtistClickHandler, Serializable {
-    final ArtistsProvider artistsProvider = new WebArtistsProvider(this);
+    final ArtistsProvider artistsProvider;
     WeakReference<ArtistsListView> artistsListView;
     WeakReference<ArtistInfoView> artistInfoView;
     WeakReference<Fragment> currentFragment;
 
     List<Artist> artists;
 
-    public ArtistsPresenter() {
-
+    public ArtistsPresenter(Context context) {
+        artistsProvider = new WebArtistsProvider(this, context);
     }
 
     @Override
