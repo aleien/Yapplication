@@ -6,13 +6,12 @@
 
     <ImageView
         android:id="@+id/cover"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="@dimen/small_photo"
+        android:layout_height="@dimen/small_photo"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_margin="@dimen/activity_margin"
-        tools:layout_height="100dp"
-        tools:layout_width="100dp"
+        android:contentDescription="@string/artist_photo"
         tools:src="#a2d4ff" />
 
     <TextView

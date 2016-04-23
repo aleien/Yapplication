@@ -5,11 +5,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.util.List;
 
 import okhttp3.Cache;
@@ -27,24 +23,21 @@ import ru.aleien.yapplication.utils.Utils;
  * Created by aleien on 09.04.16.
  * Поставщик данных о музыкантах с некоторого url.
  */
-// TODO: Кэширование резульатов
+
 public class WebArtistsProvider implements ArtistsProvider {
     static final String JSON_URL = "http://cache-default03g.cdn.yandex.net/download.cdn.yandex.net/mobilization-2016/artists.json";
-    private static Interceptor REWRITE_CACHE_CONTROL_INTERCEPTOR;
     final ArtistsRequester artistsRequester;
-    private final Cache cache;
     OkHttpClient client;
 
     public WebArtistsProvider(ArtistsRequester artistsRequester, Context context) {
         this.artistsRequester = artistsRequester;
-        REWRITE_CACHE_CONTROL_INTERCEPTOR = Utils.createInterceptor(context);
-        cache = Utils.getCache(context);
+        Interceptor REWRITE_CACHE_CONTROL_INTERCEPTOR = Utils.createInterceptor(context);
+        Cache cache = Utils.getCache(context);
         client = new OkHttpClient.Builder()
                 .cache(cache)
                 .addNetworkInterceptor(REWRITE_CACHE_CONTROL_INTERCEPTOR)
                 .build();
     }
-
 
     @Override
     public void requestData() {
@@ -53,7 +46,6 @@ public class WebArtistsProvider implements ArtistsProvider {
                 .url(JSON_URL)
                 .build();
 
-//        client.networkInterceptors().add(REWRITE_CACHE_CONTROL_INTERCEPTOR);
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -62,23 +54,11 @@ public class WebArtistsProvider implements ArtistsProvider {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                List<Artist> responseList = decodeResponse(response);
-                mainHandler.post(() -> artistsRequester.provideData(responseList));
+                List<Artist> responseList = Utils.decodeResponse(response);
+                mainHandler.post(() -> artistsRequester.provideData(responseList)); // Очень странно, что onResponse выполняется не в main-треде
+                // Вместо хэндлера можно, например, использовать rx-яву, которая очень хорошо дружит с ретрофитом
             }
         });
     }
 
-
-    private List<Artist> decodeResponse(Response response) {
-        List<Artist> resultList = null;
-        Type listType = new TypeToken<List<Artist>>() {
-        }.getType();
-        try {
-            resultList = new Gson().fromJson(response.body().string(), listType);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return resultList;
-    }
 }

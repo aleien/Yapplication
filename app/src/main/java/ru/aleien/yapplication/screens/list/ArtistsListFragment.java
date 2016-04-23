@@ -26,7 +26,7 @@ public class ArtistsListFragment extends Fragment implements ArtistsListView {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View fragmentView = inflater.inflate(R.layout.fragment_artists, container, false);
+        View fragmentView = inflater.inflate(R.layout.fragment_artists_list, container, false);
         ButterKnife.bind(this, fragmentView);
         return fragmentView;
     }

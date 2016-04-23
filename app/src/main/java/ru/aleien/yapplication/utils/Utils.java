@@ -5,16 +5,20 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.annotation.NonNull;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.List;
 
 import okhttp3.Cache;
 import okhttp3.Interceptor;
 import okhttp3.Response;
+import ru.aleien.yapplication.model.Artist;
 
-/**
- * Created by aleien on 10.04.16.
- */
+
 public class Utils {
     public static String convertToString(List list, Character separator) {
         if (list == null) return "";
@@ -30,7 +34,9 @@ public class Utils {
     }
 
     public static boolean isNetworkAvailable(Context context) {
-        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getApplicationContext()
+                .getSystemService(Context.CONNECTIVITY_SERVICE);
+
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return (activeNetworkInfo != null) && (activeNetworkInfo.isConnected());
     }
@@ -57,6 +63,19 @@ public class Utils {
         File httpCacheDirectory = new File(context.getCacheDir(), "responses");
         int cacheSize = 10 * 1024 * 1024; // 10 MiB
         return new Cache(httpCacheDirectory, cacheSize);
+    }
+
+    public static List<Artist> decodeResponse(Response response) {
+        List<Artist> resultList = null;
+        Type listType = new TypeToken<List<Artist>>() {
+        }.getType();
+        try {
+            resultList = new Gson().fromJson(response.body().string(), listType);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return resultList;
     }
 
 

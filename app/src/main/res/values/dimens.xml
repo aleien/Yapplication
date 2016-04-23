@@ -3,4 +3,5 @@
     <dimen name="activity_margin">16dp</dimen>
     <dimen name="padding">8dp</dimen>
     <dimen name="small_padding">3dp</dimen>
+    <dimen name="small_photo">100dp</dimen>
 </resources>

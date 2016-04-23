@@ -4,6 +4,8 @@ import java.lang.ref.WeakReference;
 
 /**
  * Created by aleien on 21.04.16.
+ * Базовый класс для презентера, отвечает за сохранение ссылки на представление (вьюху).
+ * Используем WeakReference во избежание ликов.
  */
 public abstract class BasePresenter<V> {
     private WeakReference<V> view;
