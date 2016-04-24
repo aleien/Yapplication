@@ -26,10 +26,7 @@ import ru.aleien.yapplication.utils.adapters.ArtistsRecyclerAdapter;
 public class ArtistsPresenter extends BasePresenter<MainView> implements ArtistsRequester, ArtistClickHandler, Serializable {
     private final ArtistsProvider artistsProvider;
     private WeakReference<ArtistsListView<RecyclerView.Adapter>> artistsListView;
-    private WeakReference<ArtistInfoView> artistInfoView;
     private WeakReference<Fragment> currentFragment;
-
-    private List<Artist> artists;
 
     public ArtistsPresenter(Context context) {
         artistsProvider = new WebArtistsProvider(this, context);
@@ -43,14 +40,13 @@ public class ArtistsPresenter extends BasePresenter<MainView> implements Artists
 
     @Override
     public void takeDetailedView(ArtistInfoView info, Artist artist) {
-        artistInfoView = new WeakReference<>(info);
+        WeakReference<ArtistInfoView> artistInfoView = new WeakReference<>(info);
         artistInfoView.get().setInfo(artist);
     }
 
     @Override
     public void provideData(List<Artist> response) {
-        artists = response;
-        artistsListView.get().setAdapter(new ArtistsRecyclerAdapter(artists, this));
+        artistsListView.get().setAdapter(new ArtistsRecyclerAdapter(response, this));
     }
 
     @Override

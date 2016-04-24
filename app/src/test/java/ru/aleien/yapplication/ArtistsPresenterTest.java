@@ -1,9 +1,10 @@
 package ru.aleien.yapplication;
 
+import android.content.Context;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
 
 import java.util.ArrayList;
@@ -17,22 +18,22 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  * Created by aleien on 09.04.16.
- * Тесты!
- * Тестируем логику контроллера (интерактора).
+ * Тесты!.
  */
 
 @RunWith(org.robolectric.RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class, sdk = 21)
-public class ArtistsInteractorTest {
+public class ArtistsPresenterTest {
     private final Artist goodArtist = new Artist(1, "The Good", Arrays.asList("jazz", "swing"), 10, 2, "http://thegood.com", "The Good's description", new Artist.Cover("smallImage", "bigImage"));
+    ArtistsPresenter presenter;
+    Context context;
     private ListArtistsActivity activity;
     private Artist badArtist = new Artist(2, "The Bad", null, 0, 0, null, null, new Artist.Cover(null, null));
 
     @Before
     public void setup() {
-        activity = Robolectric.buildActivity(ListArtistsActivity.class)
-                .create()
-                .get();
+        context = mock(Context.class);
+        presenter = new ArtistsPresenter(context);
     }
 
     @Test
