@@ -21,7 +21,7 @@ public abstract class BasePresenter<V> {
         view = null;
     }
 
-    public V getView() {
+    protected V getView() {
         return view.get();
     }
 

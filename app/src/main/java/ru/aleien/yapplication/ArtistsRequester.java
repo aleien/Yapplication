@@ -1,5 +1,7 @@
 package ru.aleien.yapplication;
 
+import android.support.v7.widget.RecyclerView;
+
 import java.util.List;
 
 import ru.aleien.yapplication.model.Artist;
@@ -14,6 +16,7 @@ import ru.aleien.yapplication.screens.list.ArtistsListView;
  */
 public interface ArtistsRequester {
     void takeDetailedView(ArtistInfoView infoView, Artist artist);
-    void takeListView(ArtistsListView listView);
+
+    void takeListView(ArtistsListView<RecyclerView.Adapter> listView);
     void provideData(List<Artist> response);
 }

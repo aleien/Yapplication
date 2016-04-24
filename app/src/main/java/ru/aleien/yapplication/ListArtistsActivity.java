@@ -8,8 +8,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 public class ListArtistsActivity extends AppCompatActivity implements MainView {
-    ArtistsPresenter artistsPresenter;
-    // TODO: Найти лик и уничтожить!
+    private ArtistsPresenter artistsPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

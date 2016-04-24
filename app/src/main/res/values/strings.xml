@@ -3,4 +3,6 @@
     <string name="artist_photo">Artist photo</string>
     <string name="biography">Biography</string>
     <string name="music_info" formatted="false">%d albums · %d songs</string>
+    <string name="item_music_info" formatted="false">%d albums, %d songs</string>
+
 </resources>

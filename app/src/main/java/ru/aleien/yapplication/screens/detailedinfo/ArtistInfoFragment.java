@@ -33,6 +33,7 @@ public class ArtistInfoFragment extends Fragment implements ArtistInfoView {
     TextView infoMusic;
     @Bind(R.id.info_bio)
     TextView bio;
+
     private Artist artist;
 
     @Nullable
@@ -41,11 +42,6 @@ public class ArtistInfoFragment extends Fragment implements ArtistInfoView {
         View fragment = inflater.inflate(R.layout.fragment_artist_page, container, false);
         ButterKnife.bind(this, fragment);
         return fragment;
-    }
-
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
     }
 
     @Override
@@ -62,7 +58,6 @@ public class ArtistInfoFragment extends Fragment implements ArtistInfoView {
             infoMusic.setText(String.format(Locale.getDefault(), getResources().getString(R.string.music_info), artist.albums, artist.tracks));
             bio.setText(artist.description);
         }
-
     }
 
     @Override

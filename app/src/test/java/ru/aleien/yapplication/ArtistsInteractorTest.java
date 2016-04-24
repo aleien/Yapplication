@@ -24,9 +24,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 @RunWith(org.robolectric.RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class, sdk = 21)
 public class ArtistsInteractorTest {
+    private final Artist goodArtist = new Artist(1, "The Good", Arrays.asList("jazz", "swing"), 10, 2, "http://thegood.com", "The Good's description", new Artist.Cover("smallImage", "bigImage"));
     private ListArtistsActivity activity;
-
-    private Artist goodArtist = new Artist(1, "The Good", Arrays.asList("jazz", "swing"), 10, 2, "http://thegood.com", "The Good's description", new Artist.Cover("smallImage", "bigImage"));
     private Artist badArtist = new Artist(2, "The Bad", null, 0, 0, null, null, new Artist.Cover(null, null));
 
     @Before
@@ -56,8 +55,6 @@ public class ArtistsInteractorTest {
         List<Artist> data = new ArrayList<>();
         data.add(goodArtist);
 
-
-//        activity.artistsPresenter.provideData(data);
 
     }
 

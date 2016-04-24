@@ -2,6 +2,7 @@ package ru.aleien.yapplication;
 
 import android.content.Context;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.RecyclerView;
 
 import java.io.Serializable;
 import java.lang.ref.WeakReference;
@@ -13,9 +14,9 @@ import ru.aleien.yapplication.dataprovider.WebArtistsProvider;
 import ru.aleien.yapplication.model.Artist;
 import ru.aleien.yapplication.screens.detailedinfo.ArtistInfoFragment;
 import ru.aleien.yapplication.screens.detailedinfo.ArtistInfoView;
-import ru.aleien.yapplication.screens.list.ArtistsListFragment;
 import ru.aleien.yapplication.screens.list.ArtistsListView;
-import ru.aleien.yapplication.utils.adapters.ArtistsListAdapter;
+import ru.aleien.yapplication.screens.list.ArtistsRecyclerFragment;
+import ru.aleien.yapplication.utils.adapters.ArtistsRecyclerAdapter;
 
 /**
  * Created by aleien on 09.04.16.
@@ -23,19 +24,19 @@ import ru.aleien.yapplication.utils.adapters.ArtistsListAdapter;
  * вьюхам.
  */
 public class ArtistsPresenter extends BasePresenter<MainView> implements ArtistsRequester, ArtistClickHandler, Serializable {
-    final ArtistsProvider artistsProvider;
-    WeakReference<ArtistsListView> artistsListView;
-    WeakReference<ArtistInfoView> artistInfoView;
-    WeakReference<Fragment> currentFragment;
+    private final ArtistsProvider artistsProvider;
+    private WeakReference<ArtistsListView<RecyclerView.Adapter>> artistsListView;
+    private WeakReference<ArtistInfoView> artistInfoView;
+    private WeakReference<Fragment> currentFragment;
 
-    List<Artist> artists;
+    private List<Artist> artists;
 
     public ArtistsPresenter(Context context) {
         artistsProvider = new WebArtistsProvider(this, context);
     }
 
     @Override
-    public void takeListView(ArtistsListView list) {
+    public void takeListView(ArtistsListView<RecyclerView.Adapter> list) {
         artistsListView = new WeakReference<>(list);
         artistsProvider.requestData();
     }
@@ -49,7 +50,7 @@ public class ArtistsPresenter extends BasePresenter<MainView> implements Artists
     @Override
     public void provideData(List<Artist> response) {
         artists = response;
-        artistsListView.get().setAdapter(new ArtistsListAdapter(artists, this));
+        artistsListView.get().setAdapter(new ArtistsRecyclerAdapter(artists, this));
     }
 
     @Override
@@ -63,7 +64,7 @@ public class ArtistsPresenter extends BasePresenter<MainView> implements Artists
     @Override
     public void onStart() {
         if (currentFragment == null) {
-            ArtistsListFragment artistsListFragment = new ArtistsListFragment();
+            ArtistsRecyclerFragment artistsListFragment = new ArtistsRecyclerFragment();
             takeListView(artistsListFragment);
             currentFragment = new WeakReference<>(artistsListFragment);
         }

@@ -25,9 +25,9 @@ import ru.aleien.yapplication.utils.Utils;
  */
 
 public class WebArtistsProvider implements ArtistsProvider {
-    static final String JSON_URL = "http://cache-default03g.cdn.yandex.net/download.cdn.yandex.net/mobilization-2016/artists.json";
-    final ArtistsRequester artistsRequester;
-    OkHttpClient client;
+    private static final String JSON_URL = "http://cache-default03g.cdn.yandex.net/download.cdn.yandex.net/mobilization-2016/artists.json";
+    private final ArtistsRequester artistsRequester;
+    private OkHttpClient client;
 
     public WebArtistsProvider(ArtistsRequester artistsRequester, Context context) {
         this.artistsRequester = artistsRequester;

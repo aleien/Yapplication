@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Yapplication</string>
     <string name="artist_photo">Фото музыканта</string>
     <string name="biography">Биография</string>
     <string name="music_info" formatted="false">%d альбомов · %d песен</string>
+    <string name="item_music_info" formatted="false">%d альбомов, %d песен</string>
 </resources>

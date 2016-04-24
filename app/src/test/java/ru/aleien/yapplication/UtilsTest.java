@@ -2,7 +2,6 @@ package ru.aleien.yapplication;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.annotation.Config;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,9 +11,7 @@ import ru.aleien.yapplication.utils.Utils;
 
 import static junit.framework.Assert.assertEquals;
 
-/**
- * Created by aleien on 10.04.16.
- */
+
 @RunWith(org.robolectric.RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class, sdk = 21)
 public class UtilsTest {

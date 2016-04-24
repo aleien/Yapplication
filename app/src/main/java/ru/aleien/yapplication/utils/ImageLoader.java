@@ -27,12 +27,9 @@ public class ImageLoader {
                 if (instance == null) {
                     instance = new ImageLoader();
                 }
-
             }
-
         }
         return instance;
-
     }
 
     public void loadImageCropped(Context context, ImageView imageView, Uri uri) {
@@ -46,7 +43,6 @@ public class ImageLoader {
     public void loadImage(Context context, ImageView imageView, Uri uri) {
         Glide.with(context)
                 .load(uri)
-                .placeholder(R.drawable.ic_placeholder)
                 .into(imageView);
     }
 }
