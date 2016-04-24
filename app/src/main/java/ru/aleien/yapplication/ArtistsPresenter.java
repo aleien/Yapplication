@@ -24,7 +24,7 @@ import ru.aleien.yapplication.utils.adapters.ArtistsRecyclerAdapter;
  * вьюхам.
  */
 public class ArtistsPresenter extends BasePresenter<MainView> implements ArtistsRequester, ArtistClickHandler, Serializable {
-    private final ArtistsProvider artistsProvider;
+    ArtistsProvider artistsProvider;
     private WeakReference<ArtistsListView<RecyclerView.Adapter>> artistsListView;
     private WeakReference<Fragment> currentFragment;
 

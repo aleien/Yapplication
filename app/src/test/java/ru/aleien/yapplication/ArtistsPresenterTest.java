@@ -5,16 +5,25 @@ import android.content.Context;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.robolectric.annotation.Config;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
+import ru.aleien.yapplication.dataprovider.ArtistsProvider;
 import ru.aleien.yapplication.model.Artist;
+import ru.aleien.yapplication.screens.detailedinfo.ArtistInfoFragment;
+import ru.aleien.yapplication.screens.detailedinfo.ArtistInfoView;
 import ru.aleien.yapplication.screens.list.ArtistsListView;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyBoolean;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 /**
  * Created by aleien on 09.04.16.
@@ -24,49 +33,51 @@ import static org.hamcrest.MatcherAssert.assertThat;
 @RunWith(org.robolectric.RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class, sdk = 21)
 public class ArtistsPresenterTest {
-    private final Artist goodArtist = new Artist(1, "The Good", Arrays.asList("jazz", "swing"), 10, 2, "http://thegood.com", "The Good's description", new Artist.Cover("smallImage", "bigImage"));
     ArtistsPresenter presenter;
-    Context context;
-    private ListArtistsActivity activity;
-    private Artist badArtist = new Artist(2, "The Bad", null, 0, 0, null, null, new Artist.Cover(null, null));
+    @Mock Context context;
+    @Mock ArtistsProvider provider;
+    @Mock Artist artistMock;
+    @Mock MainView mainMock;
+    @Mock ArtistsListView listMock;
+    @Mock ArtistInfoView infoMock;
+
 
     @Before
     public void setup() {
-        context = mock(Context.class);
+        MockitoAnnotations.initMocks(this);
         presenter = new ArtistsPresenter(context);
+        presenter.artistsProvider = provider;
+        presenter.attachView(mainMock);
+
+        doAnswer((invocation -> {
+            ArrayList<Artist> items = new ArrayList<>();
+            items.add(artistMock);
+
+            presenter.provideData(items);
+            return null;
+        })).when(provider).requestData();
+    }
+
+
+    @Test
+    public void requestData() {
+        presenter.takeListView(listMock);
+        verify(provider, times(1)).requestData();
     }
 
     @Test
-    public void testSetup() {
-        assertThat("ArtistsListView visible", activity.getSupportFragmentManager().getFragments().get(0) instanceof ArtistsListView);
+    public void takeDetailedView() {
+        presenter.takeDetailedView(infoMock, artistMock);
+        verify(infoMock, times(1)).setInfo(artistMock);
     }
 
     @Test
-    public void testCachedData() {
-
+    public void artistClicked() {
+        presenter.artistClicked(artistMock);
+        verify(mainMock, times(1)).changeFragmentTo(any(ArtistInfoFragment.class), anyBoolean());
     }
 
-    @Test
-    public void testRequestData() {
-
-    }
-
-    @Test
-    public void testCorrectDataProvided() {
-        List<Artist> data = new ArrayList<>();
-        data.add(goodArtist);
 
 
-    }
-
-    @Test
-    public void testIncorrectDataProvided() {
-
-    }
-
-    @Test
-    public void connectionError() {
-
-    }
 
 }
