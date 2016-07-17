@@ -7,4 +7,9 @@
     <string name="about">About</string>
     <string name="contact">Contact</string>
 
+    <string name="about_title">About</string>
+    <string name="about_message">Version: </string>
+    <string name="title_dismiss">DISMISS</string>
+
+
 </resources>

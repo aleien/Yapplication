@@ -5,11 +5,16 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.res.ResourcesCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+
+import ru.aleien.yapplication.utils.Utils;
 
 public class ListArtistsActivity extends AppCompatActivity implements MainView {
     private ArtistsPresenter artistsPresenter;
@@ -66,6 +71,7 @@ public class ListArtistsActivity extends AppCompatActivity implements MainView {
                 getSupportFragmentManager().popBackStack();
                 break;
             case R.id.menu_about:
+                showAbout();
                 break;
             case R.id.menu_contact:
                 composeEmail();
@@ -110,5 +116,13 @@ public class ListArtistsActivity extends AppCompatActivity implements MainView {
             startActivity(emailIntent);
         }
 
+    }
+
+    private void showAbout() {
+        new AlertDialog.Builder(this)
+                .setTitle(getResources().getString(R.string.about_title))
+                .setMessage(getResources().getString(R.string.about_message) + Utils.getAppVersion(this))
+                .setNegativeButton(getResources().getString(R.string.title_dismiss), null)
+                .show();
     }
 }

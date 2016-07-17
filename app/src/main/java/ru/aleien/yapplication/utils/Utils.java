@@ -1,6 +1,8 @@
 package ru.aleien.yapplication.utils;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.annotation.NonNull;
@@ -76,6 +78,17 @@ public class Utils {
         }
 
         return resultList;
+    }
+
+    public static String getAppVersion(Context context) {
+        String versionCode = "1.0";
+        try {
+            versionCode = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return versionCode;
     }
 
 
