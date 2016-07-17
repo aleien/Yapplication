@@ -4,4 +4,6 @@
     <string name="biography">Биография</string>
     <string name="music_info" formatted="false">%d альбомов · %d песен</string>
     <string name="item_music_info" formatted="false">%d альбомов, %d песен</string>
+    <string name="about">About</string>
+    <string name="contact">Contact</string>
 </resources>

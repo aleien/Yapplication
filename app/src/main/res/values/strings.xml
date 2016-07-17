@@ -4,5 +4,7 @@
     <string name="biography">Biography</string>
     <string name="music_info" formatted="false">%d albums · %d songs</string>
     <string name="item_music_info" formatted="false">%d albums, %d songs</string>
+    <string name="about">About</string>
+    <string name="contact">Contact</string>
 
 </resources>

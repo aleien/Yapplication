@@ -1,10 +1,14 @@
 package ru.aleien.yapplication;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 
 public class ListArtistsActivity extends AppCompatActivity implements MainView {
@@ -46,13 +50,28 @@ public class ListArtistsActivity extends AppCompatActivity implements MainView {
         outState.putSerializable("presenterState", artistsPresenter);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
     @SuppressWarnings("ConstantConditions")
     @Override
     public boolean onOptionsItemSelected(MenuItem menuItem) {
-        if (menuItem.getItemId() == android.R.id.home) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-            getSupportFragmentManager().popBackStack();
+        switch (menuItem.getItemId()) {
+            case android.R.id.home:
+                getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+                getSupportFragmentManager().popBackStack();
+                break;
+            case R.id.menu_about:
+                break;
+            case R.id.menu_contact:
+                composeEmail();
+                break;
         }
+
         return super.onOptionsItemSelected(menuItem);
     }
 
@@ -79,5 +98,17 @@ public class ListArtistsActivity extends AppCompatActivity implements MainView {
         super.onBackPressed();
         //noinspection ConstantConditions
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+    }
+
+    private void composeEmail() {
+        Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
+        emailIntent.setType("text/plain");
+        emailIntent.setData(Uri.parse("mailto:"));
+        emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"technogenom@gmail.com"});
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Re: Yapplication");
+        if (emailIntent.resolveActivity(getPackageManager()) != null) {
+            startActivity(emailIntent);
+        }
+
     }
 }
