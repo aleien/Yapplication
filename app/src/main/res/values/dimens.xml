@@ -4,4 +4,5 @@
     <dimen name="padding">8dp</dimen>
     <dimen name="small_padding">3dp</dimen>
     <dimen name="small_photo">100dp</dimen>
+    <dimen name="toolbar">55dp</dimen>
 </resources>
