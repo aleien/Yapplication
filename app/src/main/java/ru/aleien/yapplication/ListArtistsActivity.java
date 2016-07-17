@@ -1,18 +1,26 @@
 package ru.aleien.yapplication;
 
+import android.app.NotificationManager;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import ru.aleien.yapplication.utils.Utils;
 
@@ -41,6 +49,19 @@ public class ListArtistsActivity extends AppCompatActivity implements MainView {
         super.onStart();
         artistsPresenter.attachView(this);
         artistsPresenter.onStart();
+
+        registerReceiver(new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+                showHeadphonesNotification(audioManager.isWiredHeadsetOn()
+                        || audioManager.isBluetoothA2dpOn()
+                        || audioManager.isBluetoothScoOn());
+
+            }
+            // TODO: Реагировать на Bluetooth-гарнитуру
+        }, new IntentFilter(Intent.ACTION_HEADSET_PLUG));
+
     }
 
     @Override
@@ -104,6 +125,28 @@ public class ListArtistsActivity extends AppCompatActivity implements MainView {
         super.onBackPressed();
         //noinspection ConstantConditions
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+    }
+
+    private void showHeadphonesNotification(boolean wiredHeadsetOn) {
+        String headphonesMessage = wiredHeadsetOn ? "Headphones are plugged in" : "Headphones are unplugged";
+        Toast.makeText(ListArtistsActivity.this, headphonesMessage, Toast.LENGTH_LONG).show();
+
+        NotificationCompat.Builder mBuilder =
+                new NotificationCompat.Builder(this)
+                        .setSmallIcon(R.drawable.ic_stat_hardware_headset)
+                        .setContentTitle("My notification")
+                        .setContentText("Hello World!");
+
+        int musicNotificationId = 001;
+        int radioNotificationId = 002;
+
+        NotificationManager mNotifyMgr =
+                (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+        mNotifyMgr.notify(musicNotificationId, mBuilder.build());
+        mNotifyMgr.notify(radioNotificationId, mBuilder.build());
+
+
     }
 
     private void composeEmail() {
