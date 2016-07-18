@@ -91,5 +91,14 @@ public class Utils {
         return versionCode;
     }
 
+    public static boolean checkPackageExists(Context context, String targetPackage) {
+        try {
+            context.getPackageManager().getPackageInfo(targetPackage, PackageManager.GET_META_DATA);
+        } catch (PackageManager.NameNotFoundException e) {
+            return false;
+        }
+        return true;
+    }
+
 
 }

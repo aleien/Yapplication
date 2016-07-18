@@ -1,6 +1,7 @@
 package ru.aleien.yapplication;
 
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -22,6 +23,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import ru.aleien.yapplication.utils.IntentBuilder;
 import ru.aleien.yapplication.utils.Utils;
 
 public class ListArtistsActivity extends AppCompatActivity implements MainView {
@@ -127,25 +129,37 @@ public class ListArtistsActivity extends AppCompatActivity implements MainView {
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
     }
 
+    // TODO: Вынести в отдельный класс
+    // TODO: При открытой странице инфо об артисте, открывать страницу артиста
     private void showHeadphonesNotification(boolean wiredHeadsetOn) {
-        String headphonesMessage = wiredHeadsetOn ? "Headphones are plugged in" : "Headphones are unplugged";
-        Toast.makeText(ListArtistsActivity.this, headphonesMessage, Toast.LENGTH_LONG).show();
+        Intent musicIntent = IntentBuilder.buildOpenAppOrMarketPageIntent("ru.yandex.music", this);
+        Intent radioIntent = IntentBuilder.buildOpenAppOrMarketPageIntent("ru.yandex.radio",this);
 
-        NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.drawable.ic_stat_hardware_headset)
-                        .setContentTitle("My notification")
-                        .setContentText("Hello World!");
+        PendingIntent musicPendingIntent = PendingIntent.getActivity(this, 1010, musicIntent, 0);
+        PendingIntent radioPendingIntent = PendingIntent.getActivity(this, 1020, radioIntent, 0);
 
         int musicNotificationId = 001;
-        int radioNotificationId = 002;
 
-        NotificationManager mNotifyMgr =
-                (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        if (wiredHeadsetOn) {
+            NotificationCompat.Builder musicNotificationBuilder =
+                    new NotificationCompat.Builder(this)
+                            .setSmallIcon(R.drawable.ic_stat_hardware_headset)
+                            .setColor(ContextCompat.getColor(this, R.color.colorPrimary))
+                            .setContentTitle("Headphones plugged in")
+                            .addAction(R.drawable.ic_stat_yamusic, "Ya.Music", musicPendingIntent)
+                            .addAction(R.drawable.ic_stat_hardware_headset, "Ya.Radio", radioPendingIntent)
+                            .setContentText("Open in:");
 
-        mNotifyMgr.notify(musicNotificationId, mBuilder.build());
-        mNotifyMgr.notify(radioNotificationId, mBuilder.build());
+            NotificationManager mNotifyMgr =
+                    (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
+            mNotifyMgr.notify(musicNotificationId, musicNotificationBuilder.build());
+        } else {
+            NotificationManager mNotifyMgr =
+                    (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+            mNotifyMgr.cancel(musicNotificationId);
+        }
 
     }
 
