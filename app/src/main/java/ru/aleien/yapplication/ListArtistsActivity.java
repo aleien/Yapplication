@@ -1,11 +1,30 @@
 package ru.aleien.yapplication;
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.media.AudioManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.res.ResourcesCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Toast;
+
+import ru.aleien.yapplication.utils.IntentBuilder;
+import ru.aleien.yapplication.utils.Utils;
 
 public class ListArtistsActivity extends AppCompatActivity implements MainView {
     private ArtistsPresenter artistsPresenter;
@@ -32,6 +51,19 @@ public class ListArtistsActivity extends AppCompatActivity implements MainView {
         super.onStart();
         artistsPresenter.attachView(this);
         artistsPresenter.onStart();
+
+        registerReceiver(new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+                showHeadphonesNotification(audioManager.isWiredHeadsetOn()
+                        || audioManager.isBluetoothA2dpOn()
+                        || audioManager.isBluetoothScoOn());
+
+            }
+            // TODO: Реагировать на Bluetooth-гарнитуру
+        }, new IntentFilter(Intent.ACTION_HEADSET_PLUG));
+
     }
 
     @Override
@@ -46,13 +78,29 @@ public class ListArtistsActivity extends AppCompatActivity implements MainView {
         outState.putSerializable("presenterState", artistsPresenter);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
     @SuppressWarnings("ConstantConditions")
     @Override
     public boolean onOptionsItemSelected(MenuItem menuItem) {
-        if (menuItem.getItemId() == android.R.id.home) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-            getSupportFragmentManager().popBackStack();
+        switch (menuItem.getItemId()) {
+            case android.R.id.home:
+                getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+                getSupportFragmentManager().popBackStack();
+                break;
+            case R.id.menu_about:
+                showAbout();
+                break;
+            case R.id.menu_contact:
+                composeEmail();
+                break;
         }
+
         return super.onOptionsItemSelected(menuItem);
     }
 
@@ -79,5 +127,59 @@ public class ListArtistsActivity extends AppCompatActivity implements MainView {
         super.onBackPressed();
         //noinspection ConstantConditions
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+    }
+
+    // TODO: Вынести в отдельный класс
+    // TODO: При открытой странице инфо об артисте, открывать страницу артиста
+    private void showHeadphonesNotification(boolean wiredHeadsetOn) {
+        Intent musicIntent = IntentBuilder.buildOpenAppOrMarketPageIntent("ru.yandex.music", this);
+        Intent radioIntent = IntentBuilder.buildOpenAppOrMarketPageIntent("ru.yandex.radio",this);
+
+        PendingIntent musicPendingIntent = PendingIntent.getActivity(this, 1010, musicIntent, 0);
+        PendingIntent radioPendingIntent = PendingIntent.getActivity(this, 1020, radioIntent, 0);
+
+        int musicNotificationId = 001;
+
+        if (wiredHeadsetOn) {
+            NotificationCompat.Builder musicNotificationBuilder =
+                    new NotificationCompat.Builder(this)
+                            .setSmallIcon(R.drawable.ic_stat_hardware_headset)
+                            .setColor(ContextCompat.getColor(this, R.color.colorPrimary))
+                            .setContentTitle("Headphones plugged in")
+                            .addAction(R.drawable.ic_stat_yamusic, "Ya.Music", musicPendingIntent)
+                            .addAction(R.drawable.ic_stat_hardware_headset, "Ya.Radio", radioPendingIntent)
+                            .setContentText("Open in:");
+
+            NotificationManager mNotifyMgr =
+                    (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+            mNotifyMgr.notify(musicNotificationId, musicNotificationBuilder.build());
+        } else {
+            NotificationManager mNotifyMgr =
+                    (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+            mNotifyMgr.cancel(musicNotificationId);
+        }
+
+    }
+
+    private void composeEmail() {
+        Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
+        emailIntent.setType("text/plain");
+        emailIntent.setData(Uri.parse("mailto:"));
+        emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"technogenom@gmail.com"});
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Re: Yapplication");
+        if (emailIntent.resolveActivity(getPackageManager()) != null) {
+            startActivity(emailIntent);
+        }
+
+    }
+
+    private void showAbout() {
+        new AlertDialog.Builder(this)
+                .setTitle(getResources().getString(R.string.about_title))
+                .setMessage(getResources().getString(R.string.about_message) + Utils.getAppVersion(this))
+                .setNegativeButton(getResources().getString(R.string.title_dismiss), null)
+                .show();
     }
 }
