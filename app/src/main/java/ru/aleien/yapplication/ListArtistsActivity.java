@@ -33,7 +33,7 @@ import ru.aleien.yapplication.utils.IntentBuilder;
 import ru.aleien.yapplication.utils.Utils;
 
 public class ListArtistsActivity extends AppCompatActivity implements MainView {
-    ArtistsPresenter artistsPresenter;
+    @Inject ArtistsPresenter artistsPresenter;
     @Inject SQLiteDatabase database;
 
     @Override
@@ -46,15 +46,6 @@ public class ListArtistsActivity extends AppCompatActivity implements MainView {
 
         setContentView(R.layout.activity_main);
         setupToolbar();
-        instantiatePresenter(savedInstanceState);
-    }
-
-    private void instantiatePresenter(Bundle savedInstanceState) {
-        if (savedInstanceState != null && savedInstanceState.containsKey("presenterState")) {
-            artistsPresenter = (ArtistsPresenter) savedInstanceState.get("presenterState");
-        } else {
-            artistsPresenter = new ArtistsPresenter(this);
-        }
     }
 
     @Override
@@ -128,7 +119,7 @@ public class ListArtistsActivity extends AppCompatActivity implements MainView {
         getSupportActionBar().setDisplayHomeAsUpEnabled(hideBackButton);
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, fragment)
-                .addToBackStack(null)
+                .addToBackStack("info")
                 .commit();
     }
 

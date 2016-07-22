@@ -9,6 +9,7 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 import ru.aleien.yapplication.ArtistsPresenter;
+import ru.aleien.yapplication.model.DBHelper;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -19,6 +20,7 @@ import static android.content.Context.MODE_PRIVATE;
 public class AppModule {
 
     private Context context;
+    public static String dbName = "ArtistsDB";
 
     public AppModule(Activity activity) {
         this.context = activity.getApplicationContext();
@@ -33,12 +35,13 @@ public class AppModule {
     @Provides
     @Singleton
     SQLiteDatabase provideDatabase(Context context) {
-        return context.openOrCreateDatabase("ArtistsDB", MODE_PRIVATE, null);
+        return context.openOrCreateDatabase(dbName, MODE_PRIVATE, null);
     }
 
-//    @Provides
-//    @Singleton
-//    ArtistsPresenter provideArtistsPresenter(Activity activity) {
-//        return new ArtistsPresenter(activity);
-//    }
+    @Provides
+    @Singleton
+    DBHelper provideDBHelper(Context context) {
+        return new DBHelper(context, dbName);
+    }
+
 }

@@ -14,6 +14,7 @@ import ru.aleien.yapplication.base.BasePresenter;
 import ru.aleien.yapplication.dataprovider.ArtistsProvider;
 import ru.aleien.yapplication.dataprovider.WebArtistsProvider;
 import ru.aleien.yapplication.model.Artist;
+import ru.aleien.yapplication.model.DBHelper;
 import ru.aleien.yapplication.screens.detailedinfo.ArtistInfoFragment;
 import ru.aleien.yapplication.screens.detailedinfo.ArtistInfoView;
 import ru.aleien.yapplication.screens.list.ArtistsListView;
@@ -27,17 +28,27 @@ import ru.aleien.yapplication.utils.adapters.ArtistsRecyclerAdapter;
  */
 public class ArtistsPresenter extends BasePresenter<MainView> implements ArtistsRequester, ArtistClickHandler, Serializable {
     ArtistsProvider artistsProvider;
+    DBHelper dbHelper;
     private WeakReference<ArtistsListView<RecyclerView.Adapter>> artistsListView;
     private WeakReference<Fragment> currentFragment;
 
-    public ArtistsPresenter(Context context) {
+    @Inject
+    public ArtistsPresenter(Context context, DBHelper dbHelper) {
         artistsProvider = new WebArtistsProvider(this, context);
+        this.dbHelper = dbHelper;
     }
 
     @Override
     public void takeListView(ArtistsListView<RecyclerView.Adapter> list) {
         artistsListView = new WeakReference<>(list);
+        if (dbHelper.getAllArtists().size() != 0) {
+            showCachedData();
+        }
         artistsProvider.requestData();
+    }
+
+    private void showCachedData() {
+        // stub
     }
 
     @Override
