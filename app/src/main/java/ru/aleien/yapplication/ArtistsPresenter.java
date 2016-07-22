@@ -8,6 +8,8 @@ import java.io.Serializable;
 import java.lang.ref.WeakReference;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import ru.aleien.yapplication.base.BasePresenter;
 import ru.aleien.yapplication.dataprovider.ArtistsProvider;
 import ru.aleien.yapplication.dataprovider.WebArtistsProvider;

@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.sqlite.SQLiteDatabase;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -23,19 +24,29 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import javax.inject.Inject;
+
+import ru.aleien.yapplication.di.AppComponent;
+import ru.aleien.yapplication.di.AppModule;
+import ru.aleien.yapplication.di.DaggerAppComponent;
 import ru.aleien.yapplication.utils.IntentBuilder;
 import ru.aleien.yapplication.utils.Utils;
 
 public class ListArtistsActivity extends AppCompatActivity implements MainView {
-    private ArtistsPresenter artistsPresenter;
+    ArtistsPresenter artistsPresenter;
+    @Inject SQLiteDatabase database;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        AppComponent appComponent = DaggerAppComponent.builder()
+                .appModule(new AppModule(this))
+                .build();
+        appComponent.inject(this);
+
         setContentView(R.layout.activity_main);
         setupToolbar();
         instantiatePresenter(savedInstanceState);
-
     }
 
     private void instantiatePresenter(Bundle savedInstanceState) {
@@ -61,7 +72,6 @@ public class ListArtistsActivity extends AppCompatActivity implements MainView {
                         || audioManager.isBluetoothScoOn());
 
             }
-            // TODO: Реагировать на Bluetooth-гарнитуру
         }, new IntentFilter(Intent.ACTION_HEADSET_PLUG));
 
     }
@@ -133,7 +143,7 @@ public class ListArtistsActivity extends AppCompatActivity implements MainView {
     // TODO: При открытой странице инфо об артисте, открывать страницу артиста
     private void showHeadphonesNotification(boolean wiredHeadsetOn) {
         Intent musicIntent = IntentBuilder.buildOpenAppOrMarketPageIntent("ru.yandex.music", this);
-        Intent radioIntent = IntentBuilder.buildOpenAppOrMarketPageIntent("ru.yandex.radio",this);
+        Intent radioIntent = IntentBuilder.buildOpenAppOrMarketPageIntent("ru.yandex.radio", this);
 
         PendingIntent musicPendingIntent = PendingIntent.getActivity(this, 1010, musicIntent, 0);
         PendingIntent radioPendingIntent = PendingIntent.getActivity(this, 1020, radioIntent, 0);
