@@ -4,6 +4,7 @@ import javax.inject.Singleton;
 
 import dagger.Component;
 import ru.aleien.yapplication.ListArtistsActivity;
+import ru.aleien.yapplication.model.ArtistsDataSource;
 
 /**
  * Created by aleien on 22.07.16.
@@ -13,4 +14,6 @@ import ru.aleien.yapplication.ListArtistsActivity;
 public interface AppComponent {
 
     void inject(ListArtistsActivity listArtistsActivity);
+
+    void inject(ArtistsDataSource artistsDataSource);
 }

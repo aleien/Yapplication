@@ -41,30 +41,7 @@ public class DBHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public boolean insertArtist(String name, int tracks, int albums, String link, String description, String small_cover, String big_cover) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(ARTISTS_COLUMN_NAME, name);
-        contentValues.put(ARTISTS_COLUMN_TRACKS, tracks);
-        contentValues.put(ARTISTS_COLUMN_ALBUMS, albums);
-        contentValues.put(ARTISTS_COLUMN_LINK, link);
-        contentValues.put(ARTISTS_COLUMN_DESCRIPTION, description);
-        contentValues.put(ARTISTS_COLUMN_SMALL_COVER, small_cover);
-        contentValues.put(ARTISTS_COLUMN_BIG_COVER, big_cover);
-        db.insert(ARTISTS_TABLE_NAME, null, contentValues);
-        return true;
-    }
 
-    public ArrayList<String> getAllArtists() {
-        ArrayList<String> artists = new ArrayList<>();
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res = db.rawQuery("select * from artists", null);
-        res.moveToFirst();
 
-        while (res.isAfterLast() == false) {
-            artists.add(res.getString(res.getColumnIndex(ARTISTS_COLUMN_NAME)));
-            res.moveToNext();
-        }
-        return artists;
-    }
+
 }

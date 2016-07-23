@@ -15,9 +15,17 @@ import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
+import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.http.GET;
 import ru.aleien.yapplication.ArtistsRequester;
 import ru.aleien.yapplication.model.Artist;
 import ru.aleien.yapplication.utils.Utils;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by aleien on 09.04.16.
@@ -25,40 +33,40 @@ import ru.aleien.yapplication.utils.Utils;
  */
 
 public class WebArtistsProvider implements ArtistsProvider {
-    private static final String JSON_URL = "http://cache-default03g.cdn.yandex.net/download.cdn.yandex.net/mobilization-2016/artists.json";
+    private static final String BASE_URL = "http://cache-default03g.cdn.yandex.net/download.cdn.yandex.net/mobilization-2016/";
     private final ArtistsRequester artistsRequester;
     private OkHttpClient client;
 
+    private Api api;
+
+    interface Api {
+        @GET("artists.json")
+        Observable<List<Artist>> getArtists();
+    }
+
     public WebArtistsProvider(ArtistsRequester artistsRequester, Context context) {
         this.artistsRequester = artistsRequester;
-        Interceptor REWRITE_CACHE_CONTROL_INTERCEPTOR = Utils.createInterceptor(context);
-        Cache cache = Utils.getCache(context);
-        client = new OkHttpClient.Builder()
-                .cache(cache)
-                .addNetworkInterceptor(REWRITE_CACHE_CONTROL_INTERCEPTOR)
+        OkHttpClient loggingClient = new OkHttpClient.Builder()
+                .addInterceptor(new HttpLoggingInterceptor())
                 .build();
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create())
+                .baseUrl(BASE_URL)
+                .client(loggingClient)
+                .build();
+
+        api = retrofit.create(Api.class);
     }
 
     @Override
     public void requestData() {
-        Handler mainHandler = new Handler(Looper.getMainLooper());
-        Request request = new Request.Builder()
-                .url(JSON_URL)
-                .build();
-
-        client.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                Log.d("Main", "FAIL");
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                List<Artist> responseList = Utils.decodeResponse(response);
-                mainHandler.post(() -> artistsRequester.provideData(responseList)); // Очень странно, что onResponse выполняется не в main-треде
-                // Вместо хэндлера можно, например, использовать rx-яву, которая очень хорошо дружит с ретрофитом
-            }
-        });
+        api.getArtists()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(artistsRequester::provideData,
+                        Throwable::printStackTrace);
     }
 
 }
