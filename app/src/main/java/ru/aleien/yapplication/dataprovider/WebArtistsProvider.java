@@ -60,6 +60,7 @@ public class WebArtistsProvider implements ArtistsProvider {
         api = retrofit.create(Api.class);
     }
 
+    //TODO: переделать через rx, параллельным запросом?
     @Override
     public void requestData() {
         api.getArtists()

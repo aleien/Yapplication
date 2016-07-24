@@ -22,6 +22,8 @@ import ru.aleien.yapplication.screens.detailedinfo.ArtistInfoView;
 import ru.aleien.yapplication.screens.list.ArtistsListView;
 import ru.aleien.yapplication.screens.list.ArtistsRecyclerFragment;
 import ru.aleien.yapplication.utils.adapters.ArtistsRecyclerAdapter;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by aleien on 09.04.16.
@@ -47,11 +49,13 @@ public class ArtistsPresenter extends BasePresenter<MainView> implements Artists
     @Override
     public void takeListView(ArtistsListView<RecyclerView.Adapter> list) {
         artistsListView = new WeakReference<>(list);
-        List<Artist> cachedArtists = dbSource.getAllArtists();
-        if (cachedArtists.size() != 0) {
-            Log.d("Cache", "Got artists in cache! Size: " + cachedArtists.size());
-            provideData(cachedArtists);
-        }
+
+        subscribe(dbSource.getAllArtists()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(this::provideData,
+                        throwable -> Log.e("DBError", "Error while reading cached artists")));
+
         artistsProvider.requestData();
     }
 
@@ -65,7 +69,7 @@ public class ArtistsPresenter extends BasePresenter<MainView> implements Artists
     public void provideData(List<Artist> response) {
         artistsListView.get().setAdapter(new ArtistsRecyclerAdapter(response, this));
         dbSource.clearArtists();
-        for (Artist artist: response) {
+        for (Artist artist : response) {
             dbSource.insertArtist(artist);
         }
 

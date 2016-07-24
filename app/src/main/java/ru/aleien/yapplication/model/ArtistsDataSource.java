@@ -1,7 +1,6 @@
 package ru.aleien.yapplication.model;
 
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
@@ -10,7 +9,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import ru.aleien.yapplication.di.AppComponent;
+import rx.Observable;
 
 import static ru.aleien.yapplication.model.DBHelper.ARTISTS_COLUMN_ALBUMS;
 import static ru.aleien.yapplication.model.DBHelper.ARTISTS_COLUMN_BIG_COVER;
@@ -74,7 +73,14 @@ public class ArtistsDataSource {
         return true;
     }
 
-    public List<Artist> getAllArtists() {
+    public Observable<List<Artist>> getAllArtists() {
+        return Observable.create(subscriber -> {
+            subscriber.onNext(loadArtists());
+            subscriber.onCompleted();
+        });
+    }
+
+    private List<Artist> loadArtists() {
         List<Artist> artists = new ArrayList<>();
         SQLiteDatabase db = mHelper.getReadableDatabase();
         Cursor cursor = db.query(ARTISTS_TABLE_NAME,
