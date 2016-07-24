@@ -74,15 +74,15 @@ public class ArtistsDataSource {
         return true;
     }
 
-    public List<String> getAllArtists() {
-        List<String> artists = new ArrayList<>();
+    public List<Artist> getAllArtists() {
+        List<Artist> artists = new ArrayList<>();
         SQLiteDatabase db = mHelper.getReadableDatabase();
         Cursor cursor = db.query(ARTISTS_TABLE_NAME,
                 allColumns, null, null, null, null, null);
         cursor.moveToFirst();
 
         while (!cursor.isAfterLast()) {
-            artists.add(cursor.getString(cursor.getColumnIndex(ARTISTS_COLUMN_NAME)));
+            artists.add(cursorToArtist(cursor));
             cursor.moveToNext();
         }
 
@@ -91,6 +91,18 @@ public class ArtistsDataSource {
     }
 
     public void clearArtists() {
-        mHelper.getWritableDatabase().execSQL("DROP TABLE IF EXISTS artists");
+        mHelper.getWritableDatabase().execSQL("DELETE FROM " + DBHelper.ARTISTS_TABLE_NAME);
+    }
+
+    private Artist cursorToArtist(Cursor cursor) {
+        return new Artist(cursor.getInt(cursor.getColumnIndex(ARTISTS_COLUMN_ID)),
+                cursor.getString(cursor.getColumnIndex(ARTISTS_COLUMN_NAME)),
+                new ArrayList<>(),
+                cursor.getInt(cursor.getColumnIndex(ARTISTS_COLUMN_TRACKS)),
+                cursor.getInt(cursor.getColumnIndex(ARTISTS_COLUMN_ALBUMS)),
+                cursor.getString(cursor.getColumnIndex(ARTISTS_COLUMN_LINK)),
+                cursor.getString(cursor.getColumnIndex(ARTISTS_COLUMN_DESCRIPTION)),
+                new Artist.Cover(cursor.getString(cursor.getColumnIndex(ARTISTS_COLUMN_SMALL_COVER)),
+                        cursor.getString(cursor.getColumnIndex(ARTISTS_COLUMN_BIG_COVER))));
     }
 }

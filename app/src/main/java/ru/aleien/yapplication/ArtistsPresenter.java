@@ -47,14 +47,12 @@ public class ArtistsPresenter extends BasePresenter<MainView> implements Artists
     @Override
     public void takeListView(ArtistsListView<RecyclerView.Adapter> list) {
         artistsListView = new WeakReference<>(list);
-//        if (dbSource.getAllArtists().size() != 0) {
-//            showCachedData();
-//        }
+        List<Artist> cachedArtists = dbSource.getAllArtists();
+        if (cachedArtists.size() != 0) {
+            Log.d("Cache", "Got artists in cache! Size: " + cachedArtists.size());
+            provideData(cachedArtists);
+        }
         artistsProvider.requestData();
-    }
-
-    private void showCachedData() {
-        // stub
     }
 
     @Override
@@ -66,15 +64,11 @@ public class ArtistsPresenter extends BasePresenter<MainView> implements Artists
     @Override
     public void provideData(List<Artist> response) {
         artistsListView.get().setAdapter(new ArtistsRecyclerAdapter(response, this));
-        dbHelper.onUpgrade(dbHelper.getWritableDatabase(), 0, 1);
+        dbSource.clearArtists();
         for (Artist artist: response) {
             dbSource.insertArtist(artist);
         }
 
-        List<String> artistNames = dbSource.getAllArtists();
-        for (String artistName: artistNames) {
-            Log.d("ARTIST",artistName);
-        }
     }
 
     @Override
