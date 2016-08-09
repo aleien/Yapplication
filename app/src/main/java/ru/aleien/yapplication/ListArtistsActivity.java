@@ -24,6 +24,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.facebook.stetho.Stetho;
+
 import javax.inject.Inject;
 
 import ru.aleien.yapplication.di.AppComponent;
@@ -39,6 +41,7 @@ public class ListArtistsActivity extends AppCompatActivity implements MainView {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Stetho.initializeWithDefaults(this.getApplicationContext());
         AppComponent appComponent = DaggerAppComponent.builder()
                 .appModule(new AppModule(this))
                 .build();

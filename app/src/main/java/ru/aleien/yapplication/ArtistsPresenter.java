@@ -12,11 +12,11 @@ import java.util.List;
 import javax.inject.Inject;
 
 import ru.aleien.yapplication.base.BasePresenter;
+import ru.aleien.yapplication.database.DBBackend;
 import ru.aleien.yapplication.dataprovider.ArtistsProvider;
 import ru.aleien.yapplication.dataprovider.WebArtistsProvider;
 import ru.aleien.yapplication.model.Artist;
-import ru.aleien.yapplication.model.ArtistsDataSource;
-import ru.aleien.yapplication.model.DBHelper;
+import ru.aleien.yapplication.database.DBHelper;
 import ru.aleien.yapplication.screens.detailedinfo.ArtistInfoFragment;
 import ru.aleien.yapplication.screens.detailedinfo.ArtistInfoView;
 import ru.aleien.yapplication.screens.list.ArtistsListView;
@@ -32,16 +32,15 @@ import rx.schedulers.Schedulers;
  */
 public class ArtistsPresenter extends BasePresenter<MainView> implements ArtistsRequester, ArtistClickHandler, Serializable {
     ArtistsProvider artistsProvider;
-    DBHelper dbHelper;
-    private final ArtistsDataSource dbSource;
+    private DBHelper dbHelper;
+    private final DBBackend dbSource;
     private WeakReference<ArtistsListView<RecyclerView.Adapter>> artistsListView;
     private WeakReference<Fragment> currentFragment;
 
     @Inject
-    public ArtistsPresenter(Context context,
-                            DBHelper dbHelper,
-                            ArtistsDataSource dbSource) {
-        artistsProvider = new WebArtistsProvider(this, context);
+    public ArtistsPresenter(DBHelper dbHelper,
+                            DBBackend dbSource) {
+        artistsProvider = new WebArtistsProvider(this);
         this.dbHelper = dbHelper;
         this.dbSource = dbSource;
     }

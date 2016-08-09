@@ -9,8 +9,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import ru.aleien.yapplication.R;
 import ru.aleien.yapplication.utils.adapters.ArtistsRecyclerAdapter;
 
@@ -19,23 +20,30 @@ import ru.aleien.yapplication.utils.adapters.ArtistsRecyclerAdapter;
  * Фрагмент для отображения списка музыкантов.
  */
 public class ArtistsRecyclerFragment extends Fragment implements ArtistsListView<RecyclerView.Adapter> {
-    @Bind(R.id.artists_list)
+    @BindView(R.id.artists_list)
     RecyclerView artistsRecycler;
 
     private ArtistsRecyclerAdapter adapter;
+    private Unbinder unbinder;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View fragmentView = inflater.inflate(R.layout.fragment_artists_recycler, container, false);
-        ButterKnife.bind(this, fragmentView);
+        unbinder = ButterKnife.bind(this, fragmentView);
         return fragmentView;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        artistsRecycler.setLayoutManager(new LinearLayoutManager(view.getContext(), LinearLayoutManager.VERTICAL, false));
+        artistsRecycler.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         artistsRecycler.setAdapter(adapter);
         artistsRecycler.setHasFixedSize(true);
     }

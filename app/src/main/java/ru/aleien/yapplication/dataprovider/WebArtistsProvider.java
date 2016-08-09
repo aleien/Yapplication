@@ -44,7 +44,7 @@ public class WebArtistsProvider implements ArtistsProvider {
         Observable<List<Artist>> getArtists();
     }
 
-    public WebArtistsProvider(ArtistsRequester artistsRequester, Context context) {
+    public WebArtistsProvider(ArtistsRequester artistsRequester) {
         this.artistsRequester = artistsRequester;
         OkHttpClient loggingClient = new OkHttpClient.Builder()
                 .addInterceptor(new HttpLoggingInterceptor())

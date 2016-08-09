@@ -8,8 +8,7 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-import ru.aleien.yapplication.ArtistsPresenter;
-import ru.aleien.yapplication.model.DBHelper;
+import ru.aleien.yapplication.database.DBHelper;
 
 import static android.content.Context.MODE_PRIVATE;
 
