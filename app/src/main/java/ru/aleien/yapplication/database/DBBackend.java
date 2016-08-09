@@ -12,27 +12,14 @@ import javax.inject.Inject;
 import ru.aleien.yapplication.model.Artist;
 import rx.Observable;
 
-import static ru.aleien.yapplication.database.DBContract.ARTISTS_COLUMN_ALBUMS;
-import static ru.aleien.yapplication.database.DBContract.ARTISTS_COLUMN_BIG_COVER;
-import static ru.aleien.yapplication.database.DBContract.ARTISTS_COLUMN_DESCRIPTION;
-import static ru.aleien.yapplication.database.DBContract.ARTISTS_COLUMN_ID;
-import static ru.aleien.yapplication.database.DBContract.ARTISTS_COLUMN_LINK;
-import static ru.aleien.yapplication.database.DBContract.ARTISTS_COLUMN_NAME;
-import static ru.aleien.yapplication.database.DBContract.ARTISTS_COLUMN_SMALL_COVER;
-import static ru.aleien.yapplication.database.DBContract.ARTISTS_COLUMN_TRACKS;
-import static ru.aleien.yapplication.database.DBContract.ARTISTS_TABLE_NAME;
-import static ru.aleien.yapplication.database.DBContract.ARTIST_COLUMN_ID;
-import static ru.aleien.yapplication.database.DBContract.GENRES_COLUMN_GENRE;
-import static ru.aleien.yapplication.database.DBContract.GENRES_COLUMN_ID;
-import static ru.aleien.yapplication.database.DBContract.GENRES_TABLE_NAME;
-import static ru.aleien.yapplication.database.DBContract.GENRE_TO_ARTIST_COLUMN_ID;
-import static ru.aleien.yapplication.database.DBContract.GENRE_TO_ARTIST_TABLE_NAME;
+import static ru.aleien.yapplication.database.DBContract.GenreToArtist.ARTIST_ID;
+import static ru.aleien.yapplication.database.DBContract.GenreToArtist.GENRE_ID;
+import static ru.aleien.yapplication.database.DBContract.GenreToArtist.TABLE;
 import static ru.aleien.yapplication.database.DBContract.allColumns;
 
 public class DBBackend {
 
     private DBHelper dbOpenHelper;
-
 
     @Inject
     public DBBackend(DBHelper helper) {
@@ -64,15 +51,15 @@ public class DBBackend {
 
         try {
             ContentValues contentValues = new ContentValues();
-            contentValues.put(ARTISTS_COLUMN_NAME, name);
-            contentValues.put(ARTISTS_COLUMN_TRACKS, tracks);
-            contentValues.put(ARTISTS_COLUMN_ALBUMS, albums);
-            contentValues.put(ARTISTS_COLUMN_LINK, link);
-            contentValues.put(ARTISTS_COLUMN_DESCRIPTION, description);
-            contentValues.put(ARTISTS_COLUMN_SMALL_COVER, small_cover);
-            contentValues.put(ARTISTS_COLUMN_BIG_COVER, big_cover);
+            contentValues.put(DBContract.Artists.NAME, name);
+            contentValues.put(DBContract.Artists.TRACKS, tracks);
+            contentValues.put(DBContract.Artists.ALBUMS, albums);
+            contentValues.put(DBContract.Artists.LINK, link);
+            contentValues.put(DBContract.Artists.DESCRIPTION, description);
+            contentValues.put(DBContract.Artists.SMALL_COVER, small_cover);
+            contentValues.put(DBContract.Artists.BIG_COVER, big_cover);
 
-            long artistId = db.insert(ARTISTS_TABLE_NAME, null, contentValues);
+            long artistId = db.insert(DBContract.Artists.TABLE, null, contentValues);
             List<Long> genresIds = insertGenres(genres);
 
             insertRelation(artistId, genresIds);
@@ -89,9 +76,9 @@ public class DBBackend {
         SQLiteDatabase db = dbOpenHelper.getWritableDatabase();
         for (Long genreId : genresIds) {
             ContentValues contentValues = new ContentValues();
-            contentValues.put(ARTIST_COLUMN_ID, artistId);
-            contentValues.put(GENRES_COLUMN_ID, genreId);
-            db.insert(GENRE_TO_ARTIST_TABLE_NAME, null, contentValues);
+            contentValues.put(ARTIST_ID, artistId);
+            contentValues.put(GENRE_ID, genreId);
+            db.insert(TABLE, null, contentValues);
         }
     }
 
@@ -100,8 +87,8 @@ public class DBBackend {
         List<Long> rowIds = new ArrayList<>();
         ContentValues contentValues = new ContentValues();
         for (String genre : genres) {
-            contentValues.put(GENRES_COLUMN_GENRE, genre);
-            long rowId = db.insertWithOnConflict(GENRES_TABLE_NAME, null, contentValues, SQLiteDatabase.CONFLICT_IGNORE);
+            contentValues.put(DBContract.Genres.NAME, genre);
+            long rowId = db.insertWithOnConflict(DBContract.Genres.TABLE, null, contentValues, SQLiteDatabase.CONFLICT_IGNORE);
             rowIds.add(rowId);
         }
 
@@ -110,16 +97,13 @@ public class DBBackend {
     }
 
     public Observable<List<Artist>> getAllArtists() {
-        return Observable.create(subscriber -> {
-            subscriber.onNext(loadArtists());
-            subscriber.onCompleted();
-        });
+        return Observable.fromCallable(this::loadArtists);
     }
 
-     List<Artist> loadArtists() {
+    List<Artist> loadArtists() {
         List<Artist> artists = new ArrayList<>();
         SQLiteDatabase db = dbOpenHelper.getReadableDatabase();
-        Cursor cursor = db.query(ARTISTS_TABLE_NAME,
+        Cursor cursor = db.query(DBContract.Artists.TABLE,
                 allColumns, null, null, null, null, null);
         cursor.moveToFirst();
 
@@ -133,18 +117,18 @@ public class DBBackend {
     }
 
     public void clearArtists() {
-        dbOpenHelper.getWritableDatabase().execSQL("DELETE FROM " + ARTISTS_TABLE_NAME);
+        dbOpenHelper.getWritableDatabase().execSQL("DELETE FROM " + DBContract.Artists.TABLE);
     }
 
     private Artist cursorToArtist(Cursor cursor) {
-        return new Artist(cursor.getInt(cursor.getColumnIndex(ARTISTS_COLUMN_ID)),
-                cursor.getString(cursor.getColumnIndex(ARTISTS_COLUMN_NAME)),
+        return new Artist(cursor.getInt(cursor.getColumnIndex(DBContract.Artists.ID)),
+                cursor.getString(cursor.getColumnIndex(DBContract.Artists.NAME)),
                 new ArrayList<>(),
-                cursor.getInt(cursor.getColumnIndex(ARTISTS_COLUMN_TRACKS)),
-                cursor.getInt(cursor.getColumnIndex(ARTISTS_COLUMN_ALBUMS)),
-                cursor.getString(cursor.getColumnIndex(ARTISTS_COLUMN_LINK)),
-                cursor.getString(cursor.getColumnIndex(ARTISTS_COLUMN_DESCRIPTION)),
-                new Artist.Cover(cursor.getString(cursor.getColumnIndex(ARTISTS_COLUMN_SMALL_COVER)),
-                        cursor.getString(cursor.getColumnIndex(ARTISTS_COLUMN_BIG_COVER))));
+                cursor.getInt(cursor.getColumnIndex(DBContract.Artists.TRACKS)),
+                cursor.getInt(cursor.getColumnIndex(DBContract.Artists.ALBUMS)),
+                cursor.getString(cursor.getColumnIndex(DBContract.Artists.LINK)),
+                cursor.getString(cursor.getColumnIndex(DBContract.Artists.DESCRIPTION)),
+                new Artist.Cover(cursor.getString(cursor.getColumnIndex(DBContract.Artists.SMALL_COVER)),
+                        cursor.getString(cursor.getColumnIndex(DBContract.Artists.BIG_COVER))));
     }
 }

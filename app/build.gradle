@@ -86,5 +86,6 @@ dependencies {
     compile 'io.reactivex:rxjava:1.1.8'
 
     debugCompile 'com.facebook.stetho:stetho:1.2.0'
+    compile 'com.jakewharton.timber:timber:4.1.2'
 
 }

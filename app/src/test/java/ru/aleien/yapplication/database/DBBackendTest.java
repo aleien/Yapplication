@@ -1,13 +1,10 @@
 package ru.aleien.yapplication.database;
 
-import android.database.sqlite.SQLiteDatabase;
-
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
@@ -17,10 +14,6 @@ import java.util.List;
 
 import ru.aleien.yapplication.BuildConfig;
 import ru.aleien.yapplication.model.Artist;
-import rx.observers.TestSubscriber;
-import rx.schedulers.Schedulers;
-
-import static org.junit.Assert.*;
 
 /**
  * Created by aleien on 09.08.16.

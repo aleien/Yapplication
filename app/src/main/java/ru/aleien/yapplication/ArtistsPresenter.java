@@ -1,6 +1,5 @@
 package ru.aleien.yapplication;
 
-import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -16,14 +15,15 @@ import ru.aleien.yapplication.database.DBBackend;
 import ru.aleien.yapplication.dataprovider.ArtistsProvider;
 import ru.aleien.yapplication.dataprovider.WebArtistsProvider;
 import ru.aleien.yapplication.model.Artist;
-import ru.aleien.yapplication.database.DBHelper;
 import ru.aleien.yapplication.screens.detailedinfo.ArtistInfoFragment;
 import ru.aleien.yapplication.screens.detailedinfo.ArtistInfoView;
 import ru.aleien.yapplication.screens.list.ArtistsListView;
 import ru.aleien.yapplication.screens.list.ArtistsRecyclerFragment;
 import ru.aleien.yapplication.utils.adapters.ArtistsRecyclerAdapter;
+import rx.Completable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
+import timber.log.Timber;
 
 /**
  * Created by aleien on 09.04.16.
@@ -32,17 +32,16 @@ import rx.schedulers.Schedulers;
  */
 public class ArtistsPresenter extends BasePresenter<MainView> implements ArtistsRequester, ArtistClickHandler, Serializable {
     ArtistsProvider artistsProvider;
-    private DBHelper dbHelper;
     private final DBBackend dbSource;
     private WeakReference<ArtistsListView<RecyclerView.Adapter>> artistsListView;
     private WeakReference<Fragment> currentFragment;
 
     @Inject
-    public ArtistsPresenter(DBHelper dbHelper,
-                            DBBackend dbSource) {
-        artistsProvider = new WebArtistsProvider(this);
-        this.dbHelper = dbHelper;
+    public ArtistsPresenter(DBBackend dbSource,
+                            // Как здесь получать интерфейс?
+                            WebArtistsProvider artistsProvider) {
         this.dbSource = dbSource;
+        this.artistsProvider = artistsProvider;
     }
 
     @Override
@@ -53,9 +52,13 @@ public class ArtistsPresenter extends BasePresenter<MainView> implements Artists
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(this::provideData,
-                        throwable -> Log.e("DBError", "Error while reading cached artists")));
+                        throwable -> Timber.e("DBError", "Error while reading cached artists")));
 
-        artistsProvider.requestData();
+        artistsProvider.requestData()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(this::provideData,
+                        e -> Timber.e(e, "takeListView -> requestData"));
     }
 
     @Override
@@ -68,9 +71,13 @@ public class ArtistsPresenter extends BasePresenter<MainView> implements Artists
     public void provideData(List<Artist> response) {
         artistsListView.get().setAdapter(new ArtistsRecyclerAdapter(response, this));
         dbSource.clearArtists();
-        for (Artist artist : response) {
-            dbSource.insertArtist(artist);
-        }
+        Completable.fromAction(() -> {
+            Timber.e("Working on: " + Thread.currentThread().getName());
+            for (Artist artist : response) {
+                dbSource.insertArtist(artist);
+            }
+        }).subscribeOn(Schedulers.io()).subscribe();
+
 
     }
 

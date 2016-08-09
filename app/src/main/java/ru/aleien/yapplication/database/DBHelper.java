@@ -1,69 +1,64 @@
 package ru.aleien.yapplication.database;
 
-import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import java.util.ArrayList;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
 
-import static ru.aleien.yapplication.database.DBContract.ARTISTS_TABLE_NAME;
-import static ru.aleien.yapplication.database.DBContract.ARTIST_COLUMN_ID;
+import ru.aleien.yapplication.model.Artist;
+
 import static ru.aleien.yapplication.database.DBContract.DROP_TABLE_IF_EXISTS;
-import static ru.aleien.yapplication.database.DBContract.GENRES_COLUMN_GENRE;
-import static ru.aleien.yapplication.database.DBContract.GENRES_COLUMN_ID;
-import static ru.aleien.yapplication.database.DBContract.GENRES_TABLE_NAME;
-import static ru.aleien.yapplication.database.DBContract.GENRE_COLUMN_ID;
-import static ru.aleien.yapplication.database.DBContract.GENRE_TO_ARTIST_COLUMN_ID;
-import static ru.aleien.yapplication.database.DBContract.GENRE_TO_ARTIST_TABLE_NAME;
 
 /**
  * Created by user on 22.07.16.
  */
 
+@Singleton
 public class DBHelper extends SQLiteOpenHelper {
 
-    public DBHelper(Context context, String name) {
+    @Inject
+    public DBHelper(Context context, @Named("dbName") String name) {
         super(context, name, null, 1);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(
-                "CREATE TABLE ARTISTS " +
+                "CREATE TABLE  " + DBContract.Artists.TABLE +
                         "(" +
-                        "ID INTEGER PRIMARY KEY," +
-                        "NAME TEXT," +
-                        "TRACKS INTEGER," +
-                        "ALBUMS INTEGER," +
-                        "LINK TEXT," +
-                        "DESCRIPTION TEXT," +
-                        "SMALL_COVER TEXT," +
-                        "BIG_COVER TEXT" +
+                        DBContract.Artists.NAME + " TEXT," +
+                        DBContract.Artists.TRACKS + " INTEGER," +
+                        DBContract.Artists.ALBUMS + " INTEGER," +
+                        DBContract.Artists.LINK + " TEXT," +
+                        DBContract.Artists.DESCRIPTION + " TEXT," +
+                        DBContract.Artists.SMALL_COVER + " TEXT," +
+                        DBContract.Artists.BIG_COVER + " TEXT" +
                         ")"
         );
 
         db.execSQL(
-                "CREATE TABLE GENRES" +
+                "CREATE TABLE " +
+                        DBContract.Genres.TABLE +
                         " (" +
-                        "ID INTEGER PRIMARY KEY, " +
-                        "GENRE STRING UNIQUE" +
+                        DBContract.Genres.NAME + " STRING UNIQUE" +
                         ")");
 
         db.execSQL(
-                "CREATE TABLE " + GENRE_TO_ARTIST_TABLE_NAME +
-                        " (" + GENRE_TO_ARTIST_COLUMN_ID + " INTEGER PRIMARY KEY, "
-                        + ARTIST_COLUMN_ID + " INTEGER," + GENRE_COLUMN_ID + " INTEGER )");
+                "CREATE TABLE " + DBContract.GenreToArtist.TABLE +
+                        " (" +
+                        DBContract.GenreToArtist.ARTIST_ID + " INTEGER," +
+                        DBContract.GenreToArtist.GENRE_ID + " INTEGER )");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int i, int i1) {
-        db.execSQL(DROP_TABLE_IF_EXISTS + ARTISTS_TABLE_NAME);
-        db.execSQL(DROP_TABLE_IF_EXISTS + GENRES_TABLE_NAME);
-        db.execSQL(DROP_TABLE_IF_EXISTS + GENRE_TO_ARTIST_TABLE_NAME);
+        db.execSQL(DROP_TABLE_IF_EXISTS + DBContract.Artists.TABLE);
+        db.execSQL(DROP_TABLE_IF_EXISTS + DBContract.Genres.TABLE);
+        db.execSQL(DROP_TABLE_IF_EXISTS + DBContract.GenreToArtist.TABLE);
         onCreate(db);
     }
-
 
 }

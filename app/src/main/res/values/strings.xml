@@ -10,6 +10,10 @@
     <string name="about_title">About</string>
     <string name="about_message">This is a simple application with simple needs. No worries, no trouble.\n Well, maybe just some.</string>
     <string name="title_dismiss">DISMISS</string>
+    <string name="email_author">technogenom@gmail.com</string>
+    <string name="email_title">Re: Yapplication</string>
+    <string name="alert_dialog_ok">OK</string>
+    <string name="alert_dialog_cancel">CANCEL</string>
 
 
 </resources>

@@ -6,48 +6,65 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.database.sqlite.SQLiteDatabase;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.PersistableBundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.res.ResourcesCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.Toast;
-
-import com.facebook.stetho.Stetho;
 
 import javax.inject.Inject;
 
-import ru.aleien.yapplication.di.AppComponent;
-import ru.aleien.yapplication.di.AppModule;
-import ru.aleien.yapplication.di.DaggerAppComponent;
-import ru.aleien.yapplication.utils.IntentBuilder;
-import ru.aleien.yapplication.utils.Utils;
+import butterknife.BindString;
+import butterknife.ButterKnife;
+import ru.aleien.yapplication.screens.list.AboutDialogFragment;
+import ru.aleien.yapplication.utils.PendingIntentBuilder;
 
-public class ListArtistsActivity extends AppCompatActivity implements MainView {
+public class MainActivity extends AppCompatActivity implements MainView {
+    private final static int MUSIC_ID = 1010;
+    private final static int RADIO_ID = 1020;
+
+    private BroadcastReceiver broadcastReceiver;
     @Inject ArtistsPresenter artistsPresenter;
-    @Inject SQLiteDatabase database;
+
+    @BindString(R.string.about_title) String aboutTitle;
+    @BindString(R.string.about_message) String aboutMessage;
+    @BindString(R.string.title_dismiss) String dismissTitle;
+    @BindString(R.string.email_author) String emailTo;
+    @BindString(R.string.email_title) String emailTitle;
+    private final static Intent EMAIL_INTENT = new Intent(Intent.ACTION_SENDTO)
+            .setType("text/plain")
+            .setData(Uri.parse("mailto:"))
+            .putExtra(Intent.EXTRA_EMAIL, new String[]{"technogenom@gmail.com"})
+            .putExtra(Intent.EXTRA_SUBJECT, "Re: Yapplication");
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Stetho.initializeWithDefaults(this.getApplicationContext());
-        AppComponent appComponent = DaggerAppComponent.builder()
-                .appModule(new AppModule(this))
-                .build();
-        appComponent.inject(this);
+
+        ((App) getApplication()).dagger().inject(this);
+        broadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+                showHeadphonesNotification(audioManager.isWiredHeadsetOn()
+                        || audioManager.isBluetoothA2dpOn()
+                        || audioManager.isBluetoothScoOn());
+
+            }
+        };
 
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
         setupToolbar();
     }
 
@@ -57,16 +74,7 @@ public class ListArtistsActivity extends AppCompatActivity implements MainView {
         artistsPresenter.attachView(this);
         artistsPresenter.onStart();
 
-        registerReceiver(new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-                showHeadphonesNotification(audioManager.isWiredHeadsetOn()
-                        || audioManager.isBluetoothA2dpOn()
-                        || audioManager.isBluetoothScoOn());
-
-            }
-        }, new IntentFilter(Intent.ACTION_HEADSET_PLUG));
+        registerReceiver(broadcastReceiver, new IntentFilter(Intent.ACTION_HEADSET_PLUG));
 
     }
 
@@ -74,6 +82,7 @@ public class ListArtistsActivity extends AppCompatActivity implements MainView {
     protected void onStop() {
         super.onStop();
         artistsPresenter.detachView();
+        unregisterReceiver(broadcastReceiver);
     }
 
     @Override
@@ -122,7 +131,7 @@ public class ListArtistsActivity extends AppCompatActivity implements MainView {
         getSupportActionBar().setDisplayHomeAsUpEnabled(hideBackButton);
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, fragment)
-                .addToBackStack("info")
+                .addToBackStack(null)
                 .commit();
     }
 
@@ -136,11 +145,9 @@ public class ListArtistsActivity extends AppCompatActivity implements MainView {
     // TODO: Вынести в отдельный класс
     // TODO: При открытой странице инфо об артисте, открывать страницу артиста
     private void showHeadphonesNotification(boolean wiredHeadsetOn) {
-        Intent musicIntent = IntentBuilder.buildOpenAppOrMarketPageIntent("ru.yandex.music", this);
-        Intent radioIntent = IntentBuilder.buildOpenAppOrMarketPageIntent("ru.yandex.radio", this);
 
-        PendingIntent musicPendingIntent = PendingIntent.getActivity(this, 1010, musicIntent, 0);
-        PendingIntent radioPendingIntent = PendingIntent.getActivity(this, 1020, radioIntent, 0);
+        PendingIntent musicPendingIntent = PendingIntentBuilder.buildOpenMarketPendingIntent(MUSIC_ID, "ru.yandex.music", this);
+        PendingIntent radioPendingIntent = PendingIntentBuilder.buildOpenMarketPendingIntent(RADIO_ID, "ru.yandex.radio", this);
 
         int musicNotificationId = 001;
 
@@ -168,22 +175,15 @@ public class ListArtistsActivity extends AppCompatActivity implements MainView {
     }
 
     private void composeEmail() {
-        Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
-        emailIntent.setType("text/plain");
-        emailIntent.setData(Uri.parse("mailto:"));
-        emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"technogenom@gmail.com"});
-        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Re: Yapplication");
-        if (emailIntent.resolveActivity(getPackageManager()) != null) {
-            startActivity(emailIntent);
+        if (EMAIL_INTENT.resolveActivity(getPackageManager()) != null) {
+            startActivity(EMAIL_INTENT);
         }
 
     }
 
     private void showAbout() {
-        new AlertDialog.Builder(this)
-                .setTitle(getResources().getString(R.string.about_title))
-                .setMessage(getResources().getString(R.string.about_message) + Utils.getAppVersion(this))
-                .setNegativeButton(getResources().getString(R.string.title_dismiss), null)
-                .show();
+        DialogFragment aboutFragment = AboutDialogFragment
+                .newInstance(aboutTitle, aboutMessage);
+        aboutFragment.show(getSupportFragmentManager(), "dialog");
     }
 }

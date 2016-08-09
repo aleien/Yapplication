@@ -1,7 +1,5 @@
 package ru.aleien.yapplication.model;
 
-import android.os.Parcelable;
-
 import java.util.List;
 
 public class Artist {

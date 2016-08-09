@@ -1,14 +1,24 @@
 package ru.aleien.yapplication.di;
 
-import android.app.Activity;
+import android.app.Application;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
+import java.util.List;
+
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-import ru.aleien.yapplication.database.DBHelper;
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
+import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.http.GET;
+import ru.aleien.yapplication.model.Artist;
+import rx.Observable;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -17,12 +27,13 @@ import static android.content.Context.MODE_PRIVATE;
  */
 @Module
 public class AppModule {
+    private static final String BASE_URL = "http://cache-default03g.cdn.yandex.net/download.cdn.yandex.net/mobilization-2016/";
 
     private Context context;
-    public static String dbName = "ArtistsDB";
+    private String dbName = "ArtistsDB";
 
-    public AppModule(Activity activity) {
-        this.context = activity.getApplicationContext();
+    public AppModule(Application application) {
+        this.context = application;
     }
 
     @Provides
@@ -38,9 +49,38 @@ public class AppModule {
     }
 
     @Provides
+    @Named("dbName")
+    String provideDBName() {
+        return dbName;
+    }
+
+    @Provides
     @Singleton
-    DBHelper provideDBHelper(Context context) {
-        return new DBHelper(context, dbName);
+    Retrofit provideRestClient(OkHttpClient client) {
+        return new Retrofit.Builder()
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create())
+                .baseUrl(BASE_URL)
+                .client(client)
+                .build();
+    }
+
+    @Provides
+    @Singleton
+    OkHttpClient provideOkhttpClient() {
+        return new OkHttpClient.Builder()
+                .addInterceptor(new HttpLoggingInterceptor())
+                .build();
+    }
+
+    @Provides
+    Api provideApi(Retrofit rest) {
+        return rest.create(Api.class);
+    }
+
+    public interface Api {
+        @GET("artists.json")
+        Observable<List<Artist>> getArtists();
     }
 
 }
