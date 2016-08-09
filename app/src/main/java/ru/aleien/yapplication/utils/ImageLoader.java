@@ -32,12 +32,20 @@ public class ImageLoader {
         return instance;
     }
 
+    public void loadImageCropped(Context context, ImageView imageView, String url) {
+        loadImageCropped(context, imageView, Uri.parse(url));
+    }
+
     public void loadImageCropped(Context context, ImageView imageView, Uri uri) {
         Glide.with(context)
                 .load(uri)
                 .centerCrop()
                 .placeholder(R.drawable.ic_placeholder)
                 .into(imageView);
+    }
+
+    public void loadImage(Context context, ImageView imageView, String url) {
+        loadImage(context, imageView, Uri.parse(url));
     }
 
     public void loadImage(Context context, ImageView imageView, Uri uri) {

@@ -35,7 +35,7 @@ import timber.log.Timber;
 public class ArtistsPresenter extends BasePresenter<MainView> implements ArtistsRequester, ArtistClickHandler, Serializable {
     ArtistsProvider artistsProvider;
     private final DBBackend dbSource;
-    private WeakReference<ArtistsListView<RecyclerView.Adapter>> artistsListView;
+    private WeakReference<ArtistsView> artistsListView;
     private WeakReference<Fragment> currentFragment;
 
     @Inject

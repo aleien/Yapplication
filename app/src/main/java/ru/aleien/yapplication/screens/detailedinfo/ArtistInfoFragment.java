@@ -64,7 +64,6 @@ public class ArtistInfoFragment extends Fragment implements ArtistInfoView {
         setup();
     }
 
-    // TODO: форматирование строки в зависимости от количества песен/альбомов
     private void setup() {
         ImageLoader.getInstance().loadImage(getContext(), cover, Uri.parse(artist.cover.big));
         genres.setText(convertToString(artist.genres, ','));

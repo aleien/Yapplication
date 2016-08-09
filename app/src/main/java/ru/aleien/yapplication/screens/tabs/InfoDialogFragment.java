@@ -9,27 +9,36 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.hannesdorfmann.fragmentargs.FragmentArgs;
 import com.hannesdorfmann.fragmentargs.annotation.Arg;
 import com.hannesdorfmann.fragmentargs.annotation.FragmentWithArgs;
 
+import java.util.Locale;
+
 import butterknife.BindView;
-import butterknife.OnClick;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import ru.aleien.yapplication.R;
-import ru.aleien.yapplication.base.BaseFragment;
 import ru.aleien.yapplication.model.Artist;
-import ru.aleien.yapplication.screens.detailedinfo.ArtistInfoFragmentBuilder;
 import ru.aleien.yapplication.utils.ImageLoader;
 
-@FragmentWithArgs
-public class ArtistTabFragment extends BaseFragment {
-    @BindView(R.id.tab_image)
-    ImageView artistImage;
+import static ru.aleien.yapplication.utils.Utils.convertToString;
 
-    @Arg
-    @NonNull
-    Artist artist;
+@FragmentWithArgs
+public class InfoDialogFragment extends DialogFragment {
+    @Arg @NonNull Artist artist;
+    Unbinder unbinder;
+
+    @BindView(R.id.info_cover)
+    ImageView cover;
+    @BindView(R.id.info_genres)
+    TextView genres;
+    @BindView(R.id.info_music)
+    TextView infoMusic;
+    @BindView(R.id.info_bio)
+    TextView bio;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -40,25 +49,23 @@ public class ArtistTabFragment extends BaseFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_tab, container, false);
+        View fragment = inflater.inflate(R.layout.fragment_artist_page, container, false);
+        unbinder = ButterKnife.bind(this, fragment);
+        return fragment;
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ImageLoader.getInstance().loadImageCropped(getContext(), artistImage, artist.cover.big);
+        setup();
+
     }
 
-    @OnClick(R.id.tab_more_button)
-    public void onMoreButtonClicked() {
-        getFragmentManager()
-                .beginTransaction()
-                .replace(R.id.fragment_container, new InfoDialogFragmentBuilder(artist).build())
-                .addToBackStack(null)
-                .commit();
-//        newFragment.show(getFragmentManager(), "dialog");
-//        if (clickHandler != null) {
-//            clickHandler.artistClicked(artist);
-//        }
+    private void setup() {
+        ImageLoader.getInstance().loadImage(getContext(), cover, Uri.parse(artist.cover.big));
+        genres.setText(convertToString(artist.genres, ','));
+        infoMusic.setText(String.format(Locale.getDefault(), getResources().getString(R.string.music_info), artist.albums, artist.tracks));
+        bio.setText(artist.description);
+
     }
 }

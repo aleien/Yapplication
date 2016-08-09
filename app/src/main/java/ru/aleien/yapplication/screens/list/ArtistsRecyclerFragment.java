@@ -13,6 +13,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import ru.aleien.yapplication.ArtistClickHandler;
 import ru.aleien.yapplication.R;
 import ru.aleien.yapplication.model.Artist;

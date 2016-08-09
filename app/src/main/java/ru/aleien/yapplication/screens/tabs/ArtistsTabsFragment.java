@@ -10,6 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -28,6 +30,14 @@ public class ArtistsTabsFragment extends BaseFragment implements ArtistsView {
     @BindView(R.id.tabs_viewpager) ViewPager viewPager;
     @BindView(R.id.tabs) TabLayout tabs;
 
+    private List<Artist> cached = new ArrayList<>();
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -37,11 +47,15 @@ public class ArtistsTabsFragment extends BaseFragment implements ArtistsView {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        if (cached.size() != 0 )
+            showContent(new ArrayList<>(cached), null);
 
     }
 
     @Override
     public void showContent(List<Artist> artists, ArtistClickHandler handler) {
+        cached.clear();
+        cached.addAll(artists);
         viewPager.setAdapter(new ArtistsTabsAdapter(getFragmentManager(), artists, handler));
         tabs.setupWithViewPager(viewPager);
     }
