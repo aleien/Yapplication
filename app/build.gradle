@@ -34,11 +34,7 @@ android {
             testCoverageEnabled = true
         }
     }
-    sourceSets {
-        androidTest {
-            setRoot('src/test')
-        }
-    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -46,15 +42,19 @@ android {
 }
 
 dependencies {
-    ext.supportVersion = '23.3.0'
+    ext.supportVersion = '24.1.1'
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile "com.android.support:support-v4:$supportVersion"
     compile "com.android.support:appcompat-v7:$supportVersion"
     compile "com.android.support:design:$supportVersion"
 
     // Annotation heaven
-    compile 'com.jakewharton:butterknife:7.0.1'
+    compile 'com.jakewharton:butterknife:8.0.1'
+    apt 'com.jakewharton:butterknife-compiler:8.0.1'
     compile 'javax.annotation:jsr250-api:1.0'
+
+    compile 'com.hannesdorfmann.fragmentargs:annotation:3.0.2'
+    apt 'com.hannesdorfmann.fragmentargs:processor:3.0.2'
 
     // UI
     compile "com.android.support:cardview-v7:$supportVersion"

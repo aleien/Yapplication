@@ -2,6 +2,7 @@ package ru.aleien.yapplication.screens.detailedinfo;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -10,9 +11,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.hannesdorfmann.fragmentargs.FragmentArgs;
+import com.hannesdorfmann.fragmentargs.annotation.Arg;
+import com.hannesdorfmann.fragmentargs.annotation.FragmentWithArgs;
+
 import java.util.Locale;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import ru.aleien.yapplication.R;
 import ru.aleien.yapplication.model.Artist;
@@ -24,17 +29,26 @@ import static ru.aleien.yapplication.utils.Utils.convertToString;
  * Created by aleien on 09.04.16.
  * Фрагмент для отображения информации о музыканте.
  */
+@FragmentWithArgs
 public class ArtistInfoFragment extends Fragment implements ArtistInfoView {
-    @Bind(R.id.info_cover)
+    @BindView(R.id.info_cover)
     ImageView cover;
-    @Bind(R.id.info_genres)
+    @BindView(R.id.info_genres)
     TextView genres;
-    @Bind(R.id.info_music)
+    @BindView(R.id.info_music)
     TextView infoMusic;
-    @Bind(R.id.info_bio)
+    @BindView(R.id.info_bio)
     TextView bio;
 
-    private Artist artist;
+    @Arg
+    @NonNull
+    Artist artist;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        FragmentArgs.inject(this);
+    }
 
     @Nullable
     @Override
@@ -52,12 +66,11 @@ public class ArtistInfoFragment extends Fragment implements ArtistInfoView {
 
     // TODO: форматирование строки в зависимости от количества песен/альбомов
     private void setup() {
-        if (artist != null) {
-            ImageLoader.getInstance().loadImage(getContext(), cover, Uri.parse(artist.cover.big));
-            genres.setText(convertToString(artist.genres, ','));
-            infoMusic.setText(String.format(Locale.getDefault(), getResources().getString(R.string.music_info), artist.albums, artist.tracks));
-            bio.setText(artist.description);
-        }
+        ImageLoader.getInstance().loadImage(getContext(), cover, Uri.parse(artist.cover.big));
+        genres.setText(convertToString(artist.genres, ','));
+        infoMusic.setText(String.format(Locale.getDefault(), getResources().getString(R.string.music_info), artist.albums, artist.tracks));
+        bio.setText(artist.description);
+
     }
 
     @Override

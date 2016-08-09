@@ -12,7 +12,7 @@ import android.widget.TextView;
 import java.util.List;
 import java.util.Locale;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import ru.aleien.yapplication.ArtistClickHandler;
 import ru.aleien.yapplication.R;
@@ -59,15 +59,15 @@ public class ArtistsRecyclerAdapter extends RecyclerView.Adapter<ArtistsRecycler
     }
 
     static class ArtistHolder extends RecyclerView.ViewHolder {
-        @Bind(R.id.item_container)
+        @BindView(R.id.item_container)
         RelativeLayout container;
-        @Bind(R.id.cover)
+        @BindView(R.id.cover)
         ImageView cover;
-        @Bind(R.id.name)
+        @BindView(R.id.name)
         TextView name;
-        @Bind(R.id.genres)
+        @BindView(R.id.genres)
         TextView genres;
-        @Bind(R.id.music_info)
+        @BindView(R.id.music_info)
         TextView musicInfo;
 
         public ArtistHolder(View itemView) {

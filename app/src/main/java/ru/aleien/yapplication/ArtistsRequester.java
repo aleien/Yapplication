@@ -7,6 +7,7 @@ import java.util.List;
 import ru.aleien.yapplication.model.Artist;
 import ru.aleien.yapplication.screens.detailedinfo.ArtistInfoView;
 import ru.aleien.yapplication.screens.list.ArtistsListView;
+import ru.aleien.yapplication.screens.list.ArtistsView;
 
 /**
  * Created by aleien on 09.04.16.
@@ -17,6 +18,6 @@ import ru.aleien.yapplication.screens.list.ArtistsListView;
 public interface ArtistsRequester {
     void takeDetailedView(ArtistInfoView infoView, Artist artist);
 
-    void takeListView(ArtistsListView<RecyclerView.Adapter> listView);
+    void takeListView(ArtistsView listView);
     void provideData(List<Artist> response);
 }

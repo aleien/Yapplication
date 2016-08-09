@@ -21,6 +21,8 @@ import ru.aleien.yapplication.screens.detailedinfo.ArtistInfoFragment;
 import ru.aleien.yapplication.screens.detailedinfo.ArtistInfoView;
 import ru.aleien.yapplication.screens.list.ArtistsListView;
 import ru.aleien.yapplication.screens.list.ArtistsRecyclerFragment;
+import ru.aleien.yapplication.screens.list.ArtistsView;
+import ru.aleien.yapplication.screens.tabs.ArtistsTabsFragment;
 import ru.aleien.yapplication.utils.adapters.ArtistsRecyclerAdapter;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -34,7 +36,7 @@ public class ArtistsPresenter extends BasePresenter<MainView> implements Artists
     ArtistsProvider artistsProvider;
     DBHelper dbHelper;
     private final ArtistsDataSource dbSource;
-    private WeakReference<ArtistsListView<RecyclerView.Adapter>> artistsListView;
+    private WeakReference<ArtistsView> artistsListView;
     private WeakReference<Fragment> currentFragment;
 
     @Inject
@@ -47,7 +49,7 @@ public class ArtistsPresenter extends BasePresenter<MainView> implements Artists
     }
 
     @Override
-    public void takeListView(ArtistsListView<RecyclerView.Adapter> list) {
+    public void takeListView(ArtistsView list) {
         artistsListView = new WeakReference<>(list);
 
         subscribe(dbSource.getAllArtists()
@@ -67,7 +69,9 @@ public class ArtistsPresenter extends BasePresenter<MainView> implements Artists
 
     @Override
     public void provideData(List<Artist> response) {
-        artistsListView.get().setAdapter(new ArtistsRecyclerAdapter(response, this));
+        if (artistsListView != null && artistsListView.get() != null) {
+            artistsListView.get().showContent(response, this);
+        }
         dbSource.clearArtists();
         for (Artist artist : response) {
             dbSource.insertArtist(artist);
@@ -86,7 +90,7 @@ public class ArtistsPresenter extends BasePresenter<MainView> implements Artists
     @Override
     public void onStart() {
         if (currentFragment == null) {
-            ArtistsRecyclerFragment artistsListFragment = new ArtistsRecyclerFragment();
+            ArtistsTabsFragment artistsListFragment = new ArtistsTabsFragment();
             takeListView(artistsListFragment);
             currentFragment = new WeakReference<>(artistsListFragment);
         }

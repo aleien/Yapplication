@@ -9,17 +9,21 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import butterknife.Bind;
+import java.util.List;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
+import ru.aleien.yapplication.ArtistClickHandler;
 import ru.aleien.yapplication.R;
+import ru.aleien.yapplication.model.Artist;
 import ru.aleien.yapplication.utils.adapters.ArtistsRecyclerAdapter;
 
 /**
  * Created by aleien on 24.04.16.
  * Фрагмент для отображения списка музыкантов.
  */
-public class ArtistsRecyclerFragment extends Fragment implements ArtistsListView<RecyclerView.Adapter> {
-    @Bind(R.id.artists_list)
+public class ArtistsRecyclerFragment extends Fragment implements ArtistsView {
+    @BindView(R.id.artists_list)
     RecyclerView artistsRecycler;
 
     private ArtistsRecyclerAdapter adapter;
@@ -40,15 +44,10 @@ public class ArtistsRecyclerFragment extends Fragment implements ArtistsListView
         artistsRecycler.setHasFixedSize(true);
     }
 
+
     @Override
-    public void setAdapter(RecyclerView.Adapter adapter) {
-        if (adapter instanceof ArtistsRecyclerAdapter) {
-            this.adapter = (ArtistsRecyclerAdapter) adapter;
-
-            if (this.isAdded()) {
-                artistsRecycler.setAdapter(adapter);
-            }
-        }
-
+    public void showContent(List<Artist> artists, ArtistClickHandler handler) {
+        adapter = new ArtistsRecyclerAdapter(artists, handler);
+        if (isAdded()) artistsRecycler.setAdapter(adapter);
     }
 }
