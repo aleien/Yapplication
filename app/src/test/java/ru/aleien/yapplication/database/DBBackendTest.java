@@ -45,6 +45,7 @@ public class DBBackendTest {
 
         List<Artist> artists = dbBackend.loadArtists();
         Assert.assertEquals(artists.size(), 1);
+//        Assert.assertTrue(artist.equals(artists.get(0)));
     }
 
     @Test

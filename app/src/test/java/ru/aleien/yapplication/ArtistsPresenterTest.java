@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import ru.aleien.yapplication.database.DBBackend;
 import ru.aleien.yapplication.database.DBHelper;
 import ru.aleien.yapplication.dataprovider.ArtistsProvider;
+import ru.aleien.yapplication.dataprovider.WebArtistsProvider;
 import ru.aleien.yapplication.model.Artist;
 import ru.aleien.yapplication.screens.detailedinfo.ArtistInfoFragment;
 import ru.aleien.yapplication.screens.detailedinfo.ArtistInfoView;
@@ -38,6 +39,8 @@ public class ArtistsPresenterTest {
     ArtistsPresenter presenter;
     @Mock Context context;
     @Mock ArtistsProvider provider;
+    @Mock
+    WebArtistsProvider webArtistsProvider;
     @Mock Artist artistMock;
     @Mock MainView mainMock;
     @Mock ArtistsListView listMock;
@@ -51,7 +54,7 @@ public class ArtistsPresenterTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        presenter = new ArtistsPresenter(dbHelper, dbBackend);
+        presenter = new ArtistsPresenter(dbBackend, webArtistsProvider);
         presenter.artistsProvider = provider;
         presenter.attachView(mainMock);
 

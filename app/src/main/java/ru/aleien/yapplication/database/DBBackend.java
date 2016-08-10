@@ -27,7 +27,8 @@ public class DBBackend {
     }
 
     public void insertArtist(Artist artist) {
-        insertArtist(artist.name,
+        insertArtist(artist.id,
+                artist.name,
                 artist.tracks,
                 artist.albums,
                 artist.link,
@@ -37,8 +38,8 @@ public class DBBackend {
                 artist.genres);
     }
 
-    // Напрашивается билдер
-    void insertArtist(String name,
+    void insertArtist(int id,
+                      String name,
                       int tracks,
                       int albums,
                       String link,
@@ -51,6 +52,7 @@ public class DBBackend {
 
         try {
             ContentValues contentValues = new ContentValues();
+            contentValues.put(DBContract.Artists.ID, id);
             contentValues.put(DBContract.Artists.NAME, name);
             contentValues.put(DBContract.Artists.TRACKS, tracks);
             contentValues.put(DBContract.Artists.ALBUMS, albums);
@@ -68,8 +70,6 @@ public class DBBackend {
         } finally {
             db.endTransaction();
         }
-
-
     }
 
     void insertRelation(long artistId, List<Long> genresIds) {
@@ -93,7 +93,6 @@ public class DBBackend {
         }
 
         return rowIds;
-
     }
 
     public Observable<List<Artist>> getAllArtists() {
@@ -113,6 +112,7 @@ public class DBBackend {
         }
 
         cursor.close();
+
         return artists;
     }
 

@@ -23,6 +23,7 @@ public interface DBContract {
 
     }
 
+    // А может быть тут можно не genre_id, а genre_name?
     interface GenreToArtist {
         String TABLE = "genre_to_artist";
         String ARTIST_ID = "artist_id";

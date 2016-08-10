@@ -29,6 +29,7 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL(
                 "CREATE TABLE  " + DBContract.Artists.TABLE +
                         "(" +
+                        DBContract.Artists.ID + " INTEGER PRIMARY KEY, " +
                         DBContract.Artists.NAME + " TEXT," +
                         DBContract.Artists.TRACKS + " INTEGER," +
                         DBContract.Artists.ALBUMS + " INTEGER," +

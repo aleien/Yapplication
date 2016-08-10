@@ -75,7 +75,6 @@ public class MainActivity extends AppCompatActivity implements MainView {
         artistsPresenter.onStart();
 
         registerReceiver(broadcastReceiver, new IntentFilter(Intent.ACTION_HEADSET_PLUG));
-
     }
 
     @Override
@@ -171,14 +170,12 @@ public class MainActivity extends AppCompatActivity implements MainView {
 
             mNotifyMgr.cancel(musicNotificationId);
         }
-
     }
 
     private void composeEmail() {
         if (EMAIL_INTENT.resolveActivity(getPackageManager()) != null) {
             startActivity(EMAIL_INTENT);
         }
-
     }
 
     private void showAbout() {
