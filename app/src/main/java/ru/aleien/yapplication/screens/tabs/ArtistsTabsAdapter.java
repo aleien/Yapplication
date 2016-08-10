@@ -9,7 +9,6 @@ import java.util.List;
 
 import ru.aleien.yapplication.ArtistClickHandler;
 import ru.aleien.yapplication.model.Artist;
-import ru.aleien.yapplication.screens.detailedinfo.ArtistInfoFragmentBuilder;
 
 class ArtistsTabsAdapter extends FragmentStatePagerAdapter {
     private List<Artist> artists = new ArrayList<Artist>();

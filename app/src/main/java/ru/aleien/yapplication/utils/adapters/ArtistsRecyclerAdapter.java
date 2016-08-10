@@ -1,6 +1,8 @@
 package ru.aleien.yapplication.utils.adapters;
 
 import android.net.Uri;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.Locale;
 
@@ -17,6 +20,7 @@ import butterknife.ButterKnife;
 import ru.aleien.yapplication.ArtistClickHandler;
 import ru.aleien.yapplication.R;
 import ru.aleien.yapplication.model.Artist;
+import ru.aleien.yapplication.screens.tabs.ArtistsTabsFragment;
 import ru.aleien.yapplication.utils.ImageLoader;
 import ru.aleien.yapplication.utils.Utils;
 
@@ -26,12 +30,12 @@ import ru.aleien.yapplication.utils.Utils;
  */
 public class ArtistsRecyclerAdapter extends RecyclerView.Adapter<ArtistsRecyclerAdapter.ArtistHolder> {
 
-    private final List<Artist> artists;
-    private final ArtistClickHandler clickHandler;
+    @NonNull private final List<Artist> artists;
+    @Nullable private WeakReference<ArtistClickHandler> clickHandler;
 
-    public ArtistsRecyclerAdapter(List<Artist> artists, ArtistClickHandler clickHandler) {
+    public ArtistsRecyclerAdapter(@NonNull List<Artist> artists, ArtistClickHandler clickHandler) {
         this.artists = artists;
-        this.clickHandler = clickHandler;
+        this.clickHandler = new WeakReference<>(clickHandler);
     }
 
     @Override
@@ -50,12 +54,22 @@ public class ArtistsRecyclerAdapter extends RecyclerView.Adapter<ArtistsRecycler
                 holder.musicInfo.getResources().getString(R.string.item_music_info),
                 artist.albums,
                 artist.tracks));
-        holder.container.setOnClickListener(l -> clickHandler.artistClicked(artist));
+        holder.container.setOnClickListener(l -> performClick(artist));
+    }
+
+    private void performClick(Artist artist) {
+        if (clickHandler != null && clickHandler.get() != null) {
+            clickHandler.get().artistClicked(artist);
+        }
     }
 
     @Override
     public int getItemCount() {
         return artists.size();
+    }
+
+    public void setClickHandler(@Nullable ArtistsTabsFragment clickHandler) {
+        this.clickHandler = new WeakReference<>(clickHandler);
     }
 
     static class ArtistHolder extends RecyclerView.ViewHolder {

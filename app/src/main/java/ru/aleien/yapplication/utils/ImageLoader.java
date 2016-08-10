@@ -1,10 +1,15 @@
 package ru.aleien.yapplication.utils;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.Transformation;
+import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
+import com.bumptech.glide.load.resource.bitmap.BitmapTransformation;
+import com.bumptech.glide.load.resource.gifbitmap.GifBitmapWrapper;
 
 import ru.aleien.yapplication.R;
 
@@ -43,6 +48,7 @@ public class ImageLoader {
                 .placeholder(R.drawable.ic_placeholder)
                 .into(imageView);
     }
+
 
     public void loadImage(Context context, ImageView imageView, String url) {
         loadImage(context, imageView, Uri.parse(url));

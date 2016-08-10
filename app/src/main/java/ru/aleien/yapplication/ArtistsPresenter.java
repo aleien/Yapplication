@@ -81,8 +81,6 @@ public class ArtistsPresenter extends BasePresenter<MainView> implements Artists
                 dbSource.insertArtist(artist);
             }
         }).subscribeOn(Schedulers.io()).subscribe();
-
-
     }
 
     @Override
@@ -99,8 +97,11 @@ public class ArtistsPresenter extends BasePresenter<MainView> implements Artists
             ArtistsTabsFragment artistsListFragment = new ArtistsTabsFragment();
             takeListView(artistsListFragment);
             currentFragment = new WeakReference<>(artistsListFragment);
+            // Из-за этого места не происходит нормально восстановить фрагмент!
+            // Нужно как-то сообщать презентеру, что происходит ПЕРЕсоздание
+            // Тут просто архитектурная ошибка, не знаю, как сходу поправить
+            getView().changeFragmentTo(currentFragment.get(), currentFragment.get() instanceof ArtistInfoFragment);
         }
 
-        getView().changeFragmentTo(currentFragment.get(), currentFragment.get() instanceof ArtistInfoFragment);
     }
 }
