@@ -12,16 +12,14 @@ import ru.aleien.yapplication.model.Artist;
 
 import static ru.aleien.yapplication.database.DBContract.DROP_TABLE_IF_EXISTS;
 
-/**
- * Created by user on 22.07.16.
- */
-
 @Singleton
 public class DBHelper extends SQLiteOpenHelper {
+    private final static int DB_VERSION = 1;
+    private final static String DB_NAME = "dbName";
 
     @Inject
-    public DBHelper(Context context, @Named("dbName") String name) {
-        super(context, name, null, 1);
+    public DBHelper(Context context) {
+        super(context, DB_NAME, null, DB_VERSION);
     }
 
     @Override

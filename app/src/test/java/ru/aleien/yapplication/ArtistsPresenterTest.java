@@ -40,7 +40,7 @@ public class ArtistsPresenterTest {
     @Mock Context context;
     @Mock ArtistsProvider provider;
     @Mock
-    WebArtistsProvider webArtistsProvider;
+    WebArtistsProvider webProvider;
     @Mock Artist artistMock;
     @Mock MainView mainMock;
     @Mock ArtistsListView listMock;
@@ -54,7 +54,7 @@ public class ArtistsPresenterTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        presenter = new ArtistsPresenter(dbBackend, webArtistsProvider);
+        presenter = new ArtistsPresenter(dbBackend, webProvider);
         presenter.artistsProvider = provider;
         presenter.attachView(mainMock);
 

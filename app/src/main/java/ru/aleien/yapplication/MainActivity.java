@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.Cursor;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -24,8 +25,11 @@ import javax.inject.Inject;
 
 import butterknife.BindString;
 import butterknife.ButterKnife;
+import ru.aleien.yapplication.database.DBContract;
+import ru.aleien.yapplication.model.Artist;
 import ru.aleien.yapplication.screens.list.AboutDialogFragment;
 import ru.aleien.yapplication.utils.PendingIntentBuilder;
+import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity implements MainView {
     private final static int MUSIC_ID = 1010;
@@ -46,10 +50,23 @@ public class MainActivity extends AppCompatActivity implements MainView {
             .putExtra(Intent.EXTRA_SUBJECT, "Re: Yapplication");
 
 
+    final Uri ARTISTS_URI = Uri.parse("content://ru.aleien.yapplication.provider/Artists");
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //  АХАХА РАБОТА С КОНТЕНТОМ К МЭИН ТРЕДЕ ОЛОЛОЛО
+        String[] from = {"id", "name"};
+        Cursor cursor = getContentResolver().query(ARTISTS_URI, from, null, null, null);
+        cursor.moveToFirst();
+        while (cursor.moveToNext()) {
+            String artistName = cursor.getString(cursor.getColumnIndex(DBContract.Artists.NAME));
+            Timber.d(artistName);
+        }
+
+        cursor.close();
 
         ((App) getApplication()).dagger().inject(this);
         broadcastReceiver = new BroadcastReceiver() {
