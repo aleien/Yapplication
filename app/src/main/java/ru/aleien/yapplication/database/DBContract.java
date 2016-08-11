@@ -1,9 +1,5 @@
 package ru.aleien.yapplication.database;
 
-/**
- * Created by aleien on 08.08.16.
- */
-
 public interface DBContract {
     interface Artists {
         String TABLE = "artists";
@@ -20,7 +16,6 @@ public interface DBContract {
     interface Genres {
         String TABLE = "genres";
         String NAME = "genre";
-
     }
 
     // А может быть тут можно не genre_id, а genre_name?
@@ -28,7 +23,6 @@ public interface DBContract {
         String TABLE = "genre_to_artist";
         String ARTIST_ID = "artist_id";
         String GENRE_ID = "genre_id";
-
     }
 
     String DROP_TABLE_IF_EXISTS = "DROP TABLE IF EXISTS ";

@@ -22,9 +22,6 @@ import rx.Observable;
 
 import static android.content.Context.MODE_PRIVATE;
 
-/**
- * Created by user on 23.07.16.
- */
 @Module
 public class AppModule {
     private static final String BASE_URL = "http://cache-default03g.cdn.yandex.net/download.cdn.yandex.net/mobilization-2016/";
@@ -82,5 +79,4 @@ public class AppModule {
         @GET("artists.json")
         Observable<List<Artist>> getArtists();
     }
-
 }

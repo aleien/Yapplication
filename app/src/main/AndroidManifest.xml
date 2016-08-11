@@ -25,6 +25,7 @@
         <provider
             android:name=".contentprovider.ArtistsContentProvider"
             android:exported="true"
+            android:readPermission="u.aleien.yapplication.contentprovider"
             android:authorities="ru.aleien.yapplication.provider"/>
 
     </application>
