@@ -40,7 +40,7 @@ public class ArtistsPresenterTest {
     @Mock Context context;
     @Mock ArtistsProvider provider;
     @Mock
-    WebArtistsProvider webProvider;
+    WebArtistsProvider webArtistsProvider;
     @Mock Artist artistMock;
     @Mock MainView mainMock;
     @Mock ArtistsListView listMock;
@@ -50,11 +50,10 @@ public class ArtistsPresenterTest {
     @Mock
     DBHelper dbHelper;
 
-
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        presenter = new ArtistsPresenter(dbBackend, webProvider);
+        presenter = new ArtistsPresenter(dbBackend, webArtistsProvider);
         presenter.artistsProvider = provider;
         presenter.attachView(mainMock);
 
@@ -66,7 +65,6 @@ public class ArtistsPresenterTest {
             return null;
         })).when(provider).requestData();
     }
-
 
     @Test
     public void requestData() {
@@ -85,8 +83,5 @@ public class ArtistsPresenterTest {
         presenter.artistClicked(artistMock);
         verify(mainMock, times(1)).changeFragmentTo(any(ArtistInfoFragment.class), anyBoolean());
     }
-
-
-
 
 }

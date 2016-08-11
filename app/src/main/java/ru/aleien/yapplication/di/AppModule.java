@@ -17,20 +17,17 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.GET;
+import ru.aleien.yapplication.database.DBContract;
 import ru.aleien.yapplication.model.Artist;
 import rx.Observable;
 
 import static android.content.Context.MODE_PRIVATE;
 
-/**
- * Created by user on 23.07.16.
- */
 @Module
 public class AppModule {
     private static final String BASE_URL = "http://cache-default03g.cdn.yandex.net/download.cdn.yandex.net/mobilization-2016/";
 
     private Context context;
-    private String dbName = "ArtistsDB";
 
     public AppModule(Application application) {
         this.context = application;
@@ -45,13 +42,7 @@ public class AppModule {
     @Provides
     @Singleton
     SQLiteDatabase provideDatabase(Context context) {
-        return context.openOrCreateDatabase(dbName, MODE_PRIVATE, null);
-    }
-
-    @Provides
-    @Named("dbName")
-    String provideDBName() {
-        return dbName;
+        return context.openOrCreateDatabase(DBContract.DBNAME, MODE_PRIVATE, null);
     }
 
     @Provides
@@ -82,5 +73,4 @@ public class AppModule {
         @GET("artists.json")
         Observable<List<Artist>> getArtists();
     }
-
 }

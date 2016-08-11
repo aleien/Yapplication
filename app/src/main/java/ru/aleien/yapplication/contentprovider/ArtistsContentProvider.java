@@ -1,9 +1,12 @@
 package ru.aleien.yapplication.contentprovider;
 
 import android.content.ContentProvider;
+import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.Nullable;
@@ -11,22 +14,14 @@ import android.text.TextUtils;
 
 import ru.aleien.yapplication.database.DBContract;
 import ru.aleien.yapplication.database.DBHelper;
-import ru.aleien.yapplication.model.Artist;
 import timber.log.Timber;
 
-import static android.provider.ContactsContract.AUTHORITY;
-import static ru.aleien.yapplication.database.DBContract.allColumns;
-
-/**
- * Created by aleien on 10.08.16.
- */
+import static ru.aleien.yapplication.contentprovider.ProviderContract.ARTISTS_PATH;
+import static ru.aleien.yapplication.contentprovider.ProviderContract.AUTHORITY;
+import static ru.aleien.yapplication.contentprovider.ProviderContract.URI_ARTISTS;
+import static ru.aleien.yapplication.contentprovider.ProviderContract.URI_ARTISTS_ID;
 
 public class ArtistsContentProvider extends ContentProvider {
-    static final String AUTHORITY = "ru.aleien.yapplication.provider";
-
-    static final String ARTISTS_PATH = "Artists";
-    static final int URI_ARTISTS = 1;
-    static final int URI_ARTISTS_ID = 2;
 
     private static final UriMatcher uriMatcher;
 
@@ -71,7 +66,7 @@ public class ArtistsContentProvider extends ContentProvider {
 
         db = dbHelper.getReadableDatabase();
         return db.query(DBContract.Artists.TABLE,
-                allColumns, selection, null, null, null, null);
+                projection, selection, selectionArgs, null, null, sortOrder);
     }
 
     @Nullable
@@ -83,16 +78,98 @@ public class ArtistsContentProvider extends ContentProvider {
     @Nullable
     @Override
     public Uri insert(Uri uri, ContentValues values) {
+        if (uriMatcher.match(uri) != ProviderContract.URI_ARTISTS) {
+            throw new IllegalArgumentException(
+                    "Unsupported URI for insertion: " + uri);
+        }
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        if (uriMatcher.match(uri) == URI_ARTISTS) {
+            long id = db.insert(
+                    DBContract.Artists.TABLE,
+                    null,
+                    values);
+            return getUriForId(id, uri);
+        }
+
         return null;
+    }
+
+    private Uri getUriForId(long id, Uri uri) {
+        if (id > 0) {
+            Uri itemUri = ContentUris.withAppendedId(uri, id);
+            ContentResolver resolver = getContext() == null ? null : getContext().getContentResolver();
+            if (resolver != null) {
+                getContext().getContentResolver()
+                        .notifyChange(itemUri, null);
+            }
+
+            return itemUri;
+        }
+        throw new SQLException(
+                "Problem while inserting into uri: " + uri);
     }
 
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
-        return 0;
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        int delCount = 0;
+        switch (uriMatcher.match(uri)) {
+            case URI_ARTISTS:
+                delCount = db.delete(
+                        DBContract.Artists.TABLE,
+                        selection,
+                        selectionArgs);
+                break;
+            case URI_ARTISTS_ID:
+                String idStr = uri.getLastPathSegment();
+                String where = DBContract.Artists.ID + " = " + idStr;
+                if (!TextUtils.isEmpty(selection)) {
+                    where += " AND " + selection;
+                }
+                delCount = db.delete(
+                        DBContract.Artists.TABLE,
+                        where,
+                        selectionArgs);
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported URI: " + uri);
+        }
+        if (delCount > 0) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+        return delCount;
     }
 
     @Override
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
-        return 0;
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        int updateCount = 0;
+        switch (uriMatcher.match(uri)) {
+            case URI_ARTISTS:
+                updateCount = db.update(
+                        DBContract.Artists.TABLE,
+                        values,
+                        selection,
+                        selectionArgs);
+                break;
+            case URI_ARTISTS_ID:
+                String idStr = uri.getLastPathSegment();
+                String where = DBContract.Artists.ID + " = " + idStr;
+                if (!TextUtils.isEmpty(selection)) {
+                    where += " AND " + selection;
+                }
+                updateCount = db.update(
+                        DBContract.Artists.TABLE,
+                        values,
+                        where,
+                        selectionArgs);
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported URI: " + uri);
+        }
+        if (updateCount > 0) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+        return updateCount;
     }
 }

@@ -10,16 +10,15 @@ import javax.inject.Singleton;
 
 import ru.aleien.yapplication.model.Artist;
 
+import static ru.aleien.yapplication.database.DBContract.DB_VERSION;
 import static ru.aleien.yapplication.database.DBContract.DROP_TABLE_IF_EXISTS;
 
 @Singleton
 public class DBHelper extends SQLiteOpenHelper {
-    private final static int DB_VERSION = 1;
-    private final static String DB_NAME = "dbName";
 
     @Inject
     public DBHelper(Context context) {
-        super(context, DB_NAME, null, DB_VERSION);
+        super(context, DBContract.DBNAME, null, DB_VERSION);
     }
 
     @Override
@@ -28,7 +27,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 "CREATE TABLE  " + DBContract.Artists.TABLE +
                         "(" +
                         DBContract.Artists.ID + " INTEGER PRIMARY KEY, " +
-                        DBContract.Artists.NAME + " TEXT," +
+                        DBContract.Artists.NAME + " TEXT NOT NULL," +
                         DBContract.Artists.TRACKS + " INTEGER," +
                         DBContract.Artists.ALBUMS + " INTEGER," +
                         DBContract.Artists.LINK + " TEXT," +
@@ -42,14 +41,14 @@ public class DBHelper extends SQLiteOpenHelper {
                 "CREATE TABLE " +
                         DBContract.Genres.TABLE +
                         " (" +
-                        DBContract.Genres.NAME + " STRING UNIQUE" +
+                        DBContract.Genres.NAME + " TEXT UNIQUE NOT NULL" +
                         ")");
 
         db.execSQL(
                 "CREATE TABLE " + DBContract.GenreToArtist.TABLE +
                         " (" +
-                        DBContract.GenreToArtist.ARTIST_ID + " INTEGER," +
-                        DBContract.GenreToArtist.GENRE_ID + " INTEGER )");
+                        DBContract.GenreToArtist.ARTIST_ID + " INTEGER NOT NULL," +
+                        DBContract.GenreToArtist.GENRE_ID + " INTEGER NOT NULL)");
     }
 
     @Override
@@ -59,5 +58,4 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL(DROP_TABLE_IF_EXISTS + DBContract.GenreToArtist.TABLE);
         onCreate(db);
     }
-
 }

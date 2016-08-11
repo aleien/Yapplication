@@ -49,24 +49,9 @@ public class MainActivity extends AppCompatActivity implements MainView {
             .putExtra(Intent.EXTRA_EMAIL, new String[]{"technogenom@gmail.com"})
             .putExtra(Intent.EXTRA_SUBJECT, "Re: Yapplication");
 
-
-    final Uri ARTISTS_URI = Uri.parse("content://ru.aleien.yapplication.provider/Artists");
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        //  АХАХА РАБОТА С КОНТЕНТОМ К МЭИН ТРЕДЕ ОЛОЛОЛО
-        String[] from = {"id", "name"};
-        Cursor cursor = getContentResolver().query(ARTISTS_URI, from, null, null, null);
-        cursor.moveToFirst();
-        while (cursor.moveToNext()) {
-            String artistName = cursor.getString(cursor.getColumnIndex(DBContract.Artists.NAME));
-            Timber.d(artistName);
-        }
-
-        cursor.close();
 
         ((App) getApplication()).dagger().inject(this);
         broadcastReceiver = new BroadcastReceiver() {

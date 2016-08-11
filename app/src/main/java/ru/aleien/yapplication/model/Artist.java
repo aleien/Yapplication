@@ -38,7 +38,6 @@ public class Artist {
         if (!link.equals(artist.link)) return false;
         if (!description.equals(artist.description)) return false;
         return cover.equals(artist.cover);
-
     }
 
     @Override
@@ -82,7 +81,5 @@ public class Artist {
             return result;
         }
     }
-
-
 
 }
