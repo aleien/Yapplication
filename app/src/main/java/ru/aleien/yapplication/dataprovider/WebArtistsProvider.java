@@ -54,7 +54,7 @@ public class WebArtistsProvider implements ArtistsProvider {
 
         Retrofit retrofit = new Retrofit.Builder()
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                .addConverterFactory(GsonConverterFactory.create())
+                .addConverterFactory(JacksonConverterFactory.create())
                 .baseUrl(BASE_URL)
                 .client(loggingClient)
                 .build();
