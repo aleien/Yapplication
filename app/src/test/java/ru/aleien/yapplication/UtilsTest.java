@@ -13,7 +13,7 @@ import ru.aleien.yapplication.utils.Utils;
 import static junit.framework.Assert.assertEquals;
 
 
-@RunWith(org.robolectric.RobolectricGradleTestRunner.class)
+@RunWith(org.robolectric.RobolectricTestRunner.class)
 @Config(constants = BuildConfig.class, sdk = 21)
 public class UtilsTest {
     @Test

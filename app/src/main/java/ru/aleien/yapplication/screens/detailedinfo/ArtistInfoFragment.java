@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import java.util.Locale;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import ru.aleien.yapplication.R;
 import ru.aleien.yapplication.model.Artist;
@@ -25,13 +25,13 @@ import static ru.aleien.yapplication.utils.Utils.convertToString;
  * Фрагмент для отображения информации о музыканте.
  */
 public class ArtistInfoFragment extends Fragment implements ArtistInfoView {
-    @Bind(R.id.info_cover)
+    @BindView(R.id.info_cover)
     ImageView cover;
-    @Bind(R.id.info_genres)
+    @BindView(R.id.info_genres)
     TextView genres;
-    @Bind(R.id.info_music)
+    @BindView(R.id.info_music)
     TextView infoMusic;
-    @Bind(R.id.info_bio)
+    @BindView(R.id.info_bio)
     TextView bio;
 
     private Artist artist;

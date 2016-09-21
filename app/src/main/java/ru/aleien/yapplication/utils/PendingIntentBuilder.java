@@ -1,5 +1,6 @@
 package ru.aleien.yapplication.utils;
 
+import android.app.PendingIntent;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
@@ -9,8 +10,13 @@ import android.net.Uri;
 /**
  * Created by user on 19.07.16.
  */
-public class IntentBuilder {
+public class PendingIntentBuilder {
     private static final String playStore = "market://details?id=";
+
+    public static PendingIntent buildOpenMarketPendingIntent(int id, String pack, Context context) {
+        Intent intent =  buildOpenAppOrMarketPageIntent(pack, context);
+        return PendingIntent.getActivity(context, id, intent, 0);
+    }
 
     public static Intent buildOpenAppOrMarketPageIntent(String pack, Context context) {
 
@@ -30,5 +36,7 @@ public class IntentBuilder {
         }
 
     }
+
+
 
 }
